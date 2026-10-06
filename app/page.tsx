@@ -1,69 +1,259 @@
-import Image from "next/image";
+import Link from "next/link";
+import styles from "./page.module.scss";
+
+type TicketStatus = "Open" | "In progress" | "Resolved";
+
+type Ticket = {
+  id: string;
+  subject: string;
+  category: string;
+  priority: "High" | "Medium" | "Low";
+  status: TicketStatus;
+};
+
+const tickets: Ticket[] = [
+  {
+    id: "TKT-001",
+    subject: "Unable to connect to office Wi-Fi",
+    category: "Network",
+    priority: "High",
+    status: "Open",
+  },
+  {
+    id: "TKT-002",
+    subject: "Microsoft Teams microphone issue",
+    category: "Software",
+    priority: "Medium",
+    status: "In progress",
+  },
+  {
+    id: "TKT-003",
+    subject: "Laptop running slowly",
+    category: "Hardware",
+    priority: "Medium",
+    status: "Open",
+  },
+  {
+    id: "TKT-004",
+    subject: "Email setup assistance",
+    category: "Account",
+    priority: "Low",
+    status: "Resolved",
+  },
+];
+
+const assets = [
+  { name: "Dell Latitude 5440", type: "Laptop", available: 3 },
+  { name: "Dell UltraSharp 24", type: "Monitor", available: 5 },
+  { name: "Logitech MK270", type: "Keyboard & mouse", available: 8 },
+];
+
+const statusClasses: Record<TicketStatus, string> = {
+  Open: styles.open,
+  "In progress": styles.inProgress,
+  Resolved: styles.resolved,
+};
+
+function SummaryCard({
+  label,
+  value,
+  description,
+}: {
+  label: string;
+  value: number;
+  description: string;
+}) {
+  return (
+    <article className={styles.card}>
+      <p className={styles.cardLabel}>{label}</p>
+      <p className={styles.cardValue}>{value}</p>
+      <p className={styles.cardDescription}>{description}</p>
+    </article>
+  );
+}
 
 export default function Home() {
+  const openTickets = tickets.filter(
+    (ticket) => ticket.status === "Open",
+  ).length;
+
+  const inProgress = tickets.filter(
+    (ticket) => ticket.status === "In progress",
+  ).length;
+
+  const resolved = tickets.filter(
+    (ticket) => ticket.status === "Resolved",
+  ).length;
+
+  const availableAssets = assets.reduce(
+    (total, asset) => total + asset.available,
+    0,
+  );
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className={styles.shell}>
+      <a className={styles.skipLink} href="#main-content">
+        Skip to main content
+      </a>
+
+      <aside className={styles.sidebar}>
+        <Link className={styles.brand} href="/" aria-label="ServiceDesk home">
+  <span className={styles.brandMark} aria-hidden="true">
+    S
+  </span>
+  <span>
+    ServiceDesk
+    <small>IT Service & Asset Portal</small>
+  </span>
+</Link>
+
+        <p className={styles.navLabel}>WORKSPACE</p>
+
+        <nav className={styles.navigation} aria-label="Workspace">
+          <a href="#overview">Overview</a>
+          <a href="#tickets">Recent tickets</a>
+          <a href="#assets">Available assets</a>
+        </nav>
+
+        <div className={styles.sidebarNote}>
+          <strong>Portfolio workspace</strong>
+          <p>Explore IT support and equipment management.</p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </aside>
+
+      <div className={styles.workspace}>
+        <header className={styles.header}>
+          <span>Workspace / Overview</span>
+          <span className={styles.demoBadge}>Sample data</span>
+        </header>
+
+        <main id="main-content" className={styles.main} tabIndex={-1}>
+          <section id="overview" aria-labelledby="overview-heading">
+            <div className={styles.intro}>
+              <div>
+                <p className={styles.eyebrow}>YOUR IT WORKSPACE</p>
+                <h1 id="overview-heading">Service overview</h1>
+                <p className={styles.subtitle}>
+                  Track support tickets and explore available equipment.
+                </p>
+              </div>
+
+              <a className={styles.primaryLink} href="#tickets">
+                View tickets
+              </a>
+            </div>
+
+            <p className={styles.notice}>
+              This dashboard displays fictional sample records. Ticket
+              submission, approvals, and sign-in will be added in later
+              milestones.
+            </p>
+
+            <div className={styles.stats}>
+              <SummaryCard
+                label="Open tickets"
+                value={openTickets}
+                description="Awaiting support"
+              />
+              <SummaryCard
+                label="In progress"
+                value={inProgress}
+                description="Being investigated"
+              />
+              <SummaryCard
+                label="Resolved tickets"
+                value={resolved}
+                description="Support completed"
+              />
+              <SummaryCard
+                label="Available assets"
+                value={availableAssets}
+                description="Across the sample catalogue"
+              />
+            </div>
+          </section>
+
+          <section
+            id="tickets"
+            className={styles.panel}
+            aria-labelledby="tickets-heading"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <div className={styles.panelHeading}>
+              <div>
+                <h2 id="tickets-heading">Recent tickets</h2>
+                <p>A snapshot of the sample support queue.</p>
+              </div>
+              <span className={styles.count}>{tickets.length} tickets</span>
+            </div>
+
+            <div
+              className={styles.tableScroll}
+              role="region"
+              aria-label="Recent tickets table"
+              tabIndex={0}
+            >
+              <table className={styles.table}>
+                <caption className={styles.srOnly}>
+                  Fictional support tickets with category, priority, and status
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Ticket</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Priority</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tickets.map((ticket) => (
+                    <tr key={ticket.id}>
+                      <th scope="row">{ticket.id}</th>
+                      <td>{ticket.subject}</td>
+                      <td>{ticket.category}</td>
+                      <td>{ticket.priority}</td>
+                      <td>
+                        <span
+                          className={`${styles.status} ${statusClasses[ticket.status]}`}
+                        >
+                          {ticket.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section
+            id="assets"
+            className={styles.panel}
+            aria-labelledby="assets-heading"
           >
-            Documentation
-          </a>
-        </div>
-      </main>
+            <div className={styles.panelHeading}>
+              <div>
+                <h2 id="assets-heading">Available equipment</h2>
+                <p>Sample inventory for future asset requests.</p>
+              </div>
+            </div>
+
+            <ul className={styles.assetGrid}>
+              {assets.map((asset) => (
+                <li key={asset.name} className={styles.assetCard}>
+                  <p className={styles.assetType}>{asset.type}</p>
+                  <h3>{asset.name}</h3>
+                  <p>{asset.available} available</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <footer className={styles.footer}>
+            Enterprise IT Service & Asset Portal · Portfolio project
+          </footer>
+        </main>
+      </div>
     </div>
   );
 }
