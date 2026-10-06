@@ -1,4 +1,5 @@
 import Link from "next/link";
+import TicketTable from "@/features/tickets/ticket-table";
 import styles from "./page.module.scss";
 
 type TicketStatus = "Open" | "In progress" | "Resolved";
@@ -48,11 +49,7 @@ const assets = [
   { name: "Logitech MK270", type: "Keyboard & mouse", available: 8 },
 ];
 
-const statusClasses: Record<TicketStatus, string> = {
-  Open: styles.open,
-  "In progress": styles.inProgress,
-  Resolved: styles.resolved,
-};
+
 
 function SummaryCard({
   label,
@@ -172,7 +169,6 @@ export default function Home() {
               />
             </div>
           </section>
-
           <section
             id="tickets"
             className={styles.panel}
@@ -183,47 +179,13 @@ export default function Home() {
                 <h2 id="tickets-heading">Recent tickets</h2>
                 <p>A snapshot of the sample support queue.</p>
               </div>
-              <span className={styles.count}>{tickets.length} tickets</span>
+
+              <span className={styles.count}>
+                {tickets.length} tickets
+              </span>
             </div>
 
-            <div
-              className={styles.tableScroll}
-              role="region"
-              aria-label="Recent tickets table"
-              tabIndex={0}
-            >
-              <table className={styles.table}>
-                <caption className={styles.srOnly}>
-                  Fictional support tickets with category, priority, and status
-                </caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Ticket</th>
-                    <th scope="col">Subject</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Priority</th>
-                    <th scope="col">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tickets.map((ticket) => (
-                    <tr key={ticket.id}>
-                      <th scope="row">{ticket.id}</th>
-                      <td>{ticket.subject}</td>
-                      <td>{ticket.category}</td>
-                      <td>{ticket.priority}</td>
-                      <td>
-                        <span
-                          className={`${styles.status} ${statusClasses[ticket.status]}`}
-                        >
-                          {ticket.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <TicketTable tickets={tickets} />
           </section>
 
           <section

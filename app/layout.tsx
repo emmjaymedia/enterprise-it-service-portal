@@ -1,3 +1,4 @@
+import StoreProvider from "./store-provider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -28,7 +29,9 @@ export default function RootLayout({
       dir="ltr"
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+  <StoreProvider>{children}</StoreProvider>
+</body>
     </html>
   );
 }

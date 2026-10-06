@@ -6,12 +6,15 @@
 - Opened the starter page locally
 - Installed foundation packages
 
-## Next milestone
-Build the responsive application shell:
-- Sidebar navigation
-- Header
-- Dashboard summary cards
-- Recent tickets table
+## Dashboard foundation completed
+- Built the responsive sidebar, header, summary cards and ticket table.
+- Verified desktop and mobile layouts.
+- Passed lint, TypeScript and production build checks.
+
+## Current milestone
+- Add the typed Redux store, hooks and client provider.
+- Add interactive ticket filtering.
+
 
 ## Later milestones
 - Ticket workflows
@@ -22,3 +25,27 @@ Build the responsive application shell:
 - Automated tests
 - GitHub CI and Vercel/Neon deployment
 - Azure DevOps and Entra integration
+
+Verification results:
+- Lint: passed
+- TypeScript: passed
+- Production build: passed
+- Production dependency audit: 0 vulnerabilities
+- Development dependency audit: unresolved ESLint dependency findings
+- Desktop/mobile visual checks: pending
+
+## Milestone 1 — Dashboard foundation
+- Built the ServiceDesk dashboard with fictional ticket and asset data.
+- Added responsive SCSS styling.
+- Verified desktop and mobile layouts.
+- Passed ESLint, TypeScript, and production build checks.
+- Production dependency audit: 0 vulnerabilities.
+- Development dependency audit: unresolved ESLint dependency findings.
+
+## Redux ticket filtering completed
+- Added a typed Redux store, hooks and client provider.
+- Connected the ticket-status filter to Redux.
+- Verified filter counts, keyboard use and mobile layout.
+- Passed lint, TypeScript and production build checks.
+- Filter state resets on page refresh.
+- Ticket data remains fictional and static.

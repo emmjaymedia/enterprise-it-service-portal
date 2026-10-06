@@ -408,3 +408,33 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+.ticketFilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-block-end: 1rem;
+
+  label {
+    font-weight: 600;
+  }
+
+  select {
+    min-block-size: 44px;
+    max-inline-size: 100%;
+    padding-block: 0.5rem;
+    padding-inline: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--surface);
+    color: var(--foreground);
+    font: inherit;
+  }
+
+  p {
+    margin: 0;
+    color: var(--muted);
+  }
+}
