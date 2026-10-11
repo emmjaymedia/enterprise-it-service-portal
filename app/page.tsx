@@ -4,6 +4,7 @@ import Link from "next/link";
 import TicketTable from "@/features/tickets/ticket-table";
 import { useGetTicketsQuery } from "@/features/tickets/tickets-api";
 import styles from "./page.module.scss";
+import CreateTicketForm from "@/features/tickets/create-ticket-form";
 
 const assets = [
   { name: "Dell Latitude 5440", type: "Laptop", available: 3 },
@@ -108,15 +109,14 @@ export default function Home() {
                 </p>
               </div>
 
-              <a className={styles.primaryLink} href="#tickets">
-                View tickets
+              <a className={styles.primaryLink} href="#create-ticket">
+                Create ticket
               </a>
             </div>
 
             <p className={styles.notice}>
-              This dashboard displays fictional sample records. Ticket
-              submission, approvals, and sign-in will be added in later
-              milestones.
+              This local demo uses fictional records and temporary ticket storage.
+              Sign-in and approvals will be added in later milestones.  
             </p>
 
             <div className={styles.stats}>
@@ -142,6 +142,8 @@ export default function Home() {
               />
             </div>
           </section>
+          
+          <CreateTicketForm />
 
           <section
             id="tickets"

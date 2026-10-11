@@ -2,26 +2,18 @@ import {
   createApi,
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
-import { z } from "zod";
+import {
+  createTicketResponseSchema,
+  ticketsResponseSchema,
+  type CreateTicketInput,
+  type CreateTicketResponse,
+  type TicketsResponse,
+} from "./ticket-schema";
 
-const ticketSchema = z.object({
-  id: z.string(),
-  subject: z.string(),
-  category: z.string(),
-  priority: z.enum(["High", "Medium", "Low"]),
-  status: z.enum(["Open", "In progress", "Resolved"]),
-});
-
-const ticketsResponseSchema = z.object({
-  data: z.array(ticketSchema),
-  meta: z.object({
-    total: z.number().int().nonnegative(),
-    source: z.literal("fictional-sample-data"),
-  }),
-});
-
-export type Ticket = z.infer<typeof ticketSchema>;
-export type TicketsResponse = z.infer<typeof ticketsResponseSchema>;
+export type {
+  Ticket,
+  TicketsResponse,
+} from "./ticket-schema";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: "/api/",
@@ -31,14 +23,11 @@ const baseQuery = fetchBaseQuery({
 export const ticketsApi = createApi({
   reducerPath: "ticketsApi",
   baseQuery,
+  tagTypes: ["Tickets"],
   endpoints: (builder) => ({
     getTickets: builder.query<TicketsResponse, void>({
       async queryFn(_argument, api, extraOptions) {
-        const result = await baseQuery(
-          "tickets",
-          api,
-          extraOptions,
-        );
+        const result = await baseQuery("tickets", api, extraOptions);
 
         if (result.error) {
           return { error: result.error };
@@ -57,8 +46,49 @@ export const ticketsApi = createApi({
 
         return { data: parsed.data };
       },
+      providesTags: [{ type: "Tickets", id: "LIST" }],
+    }),
+
+    createTicket: builder.mutation<
+      CreateTicketResponse,
+      CreateTicketInput
+    >({
+      async queryFn(body, api, extraOptions) {
+        const result = await baseQuery(
+          {
+            url: "tickets",
+            method: "POST",
+            body,
+          },
+          api,
+          extraOptions,
+        );
+
+        if (result.error) {
+          return { error: result.error };
+        }
+
+        const parsed = createTicketResponseSchema.safeParse(result.data);
+
+        if (!parsed.success) {
+          return {
+            error: {
+              status: "CUSTOM_ERROR",
+              error:
+                "The server returned an unexpected response. Check the ticket list before submitting again.",
+            },
+          };
+        }
+
+        return { data: parsed.data };
+      },
+      invalidatesTags: (result) =>
+        result ? [{ type: "Tickets", id: "LIST" }] : [],
     }),
   }),
 });
 
-export const { useGetTicketsQuery } = ticketsApi;
+export const {
+  useGetTicketsQuery,
+  useCreateTicketMutation,
+} = ticketsApi;

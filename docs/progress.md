@@ -17,7 +17,7 @@
 
 ## Later milestones
 - Ticket workflows
-- Database persistence
+- Database persistence in stage 6
 - Authentication and permissions
 - Asset requests and approvals
 - English/Arabic localization
@@ -85,3 +85,33 @@ Connect the dashboard and ticket table to the tickets API using Redux Toolkit Qu
 - Refresh the ticket list after successful creation.
 - Add ticket details, assignment, comments, and resolution.
 - Add database persistence in the following milestone.
+
+
+## Create Ticket workflow
+
+### Changes
+- Added a shared Zod schema and ticket types.
+- Added POST /api/tickets with server validation.
+- Added a React Hook Form submission form.
+- Added an RTK Query create mutation and list invalidation.
+- Reset the status filter to All after successful creation.
+- Added pending, validation, success and failure feedback.
+
+### Limitations
+- Fictional data with temporary server-process storage.
+- No authentication or employee ownership enforcement yet.
+- PostgreSQL persistence is planned for Stage 6.
+- Not ready for a public deployment.
+
+### Verification
+- Lint: passed.
+- TypeScript: passed.
+- Production build: passed.
+- Ticket creation and retrieval: passed.
+- Automatic dashboard refresh: passed.
+- Browser workflow and keyboard/mobile checks: passed.
+- Direct API validation: passed — invalid input returns HTTP 400
+  with subject and description errors.
+- Ticket creation and retrieval: passed — GET returns three created
+  tickets alongside four sample records.
+- Automatic dashboard refresh after submission: pending confirmation.
