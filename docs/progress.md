@@ -55,3 +55,33 @@ Verification results:
 - Response includes data and metadata.
 - Passed lint, TypeScript and production build checks.
 - Dashboard connection, database and authentication remain pending.
+
+## Ticket dashboard API integration
+
+### Goal
+Connect the dashboard and ticket table to the tickets API using Redux Toolkit Query.
+
+### Changes
+- Added the GET /api/tickets Route Handler.
+- Added the RTK Query tickets API service.
+- Registered the API reducer and middleware in the Redux store.
+- Updated the dashboard and ticket table to consume API data.
+
+### Verification
+- `npm run lint` — passed.
+- `npx tsc --noEmit` — passed.
+- `npm run build` — passed.
+- Production build includes `/api/tickets`.
+- Browser checks for ticket loading, dashboard counts, filtering, and refresh — pending.
+
+### Git checkpoint
+- Commit: `8711d32`
+- Message: `Connect ticket dashboard to API with RTK Query`
+
+### Remaining work
+- Verify the current workflow in the browser.
+- Implement the Create Ticket form with validation.
+- Add POST /api/tickets and an RTK Query mutation.
+- Refresh the ticket list after successful creation.
+- Add ticket details, assignment, comments, and resolution.
+- Add database persistence in the following milestone.
