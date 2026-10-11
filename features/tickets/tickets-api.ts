@@ -1,18 +1,22 @@
 import {
   createApi,
   fetchBaseQuery,
-} from "@reduxjs/toolkit/query/react";
+  
+} from "@reduxjs/toolkit/query/react"; 
 import {
   createTicketResponseSchema,
   ticketsResponseSchema,
   type CreateTicketInput,
   type CreateTicketResponse,
   type TicketsResponse,
-} from "./ticket-schema";
+  ticketDetailsResponseSchema,
+  type TicketDetailsResponse,
+} from "./ticket-schema"; 
 
 export type {
   Ticket,
   TicketsResponse,
+  
 } from "./ticket-schema";
 
 const baseQuery = fetchBaseQuery({
@@ -48,6 +52,36 @@ export const ticketsApi = createApi({
       },
       providesTags: [{ type: "Tickets", id: "LIST" }],
     }),
+
+getTicket: builder.query<TicketDetailsResponse, string>({
+  async queryFn(id, api, extraOptions) {
+    const result = await baseQuery(
+      `tickets/${encodeURIComponent(id)}`,
+      api,
+      extraOptions,
+    );
+
+    if (result.error) {
+      return { error: result.error };
+    }
+
+    const parsed = ticketDetailsResponseSchema.safeParse(result.data);
+
+    if (!parsed.success) {
+      return {
+        error: {
+          status: "CUSTOM_ERROR",
+          error: "The ticket details response has an invalid format.",
+        },
+      };
+    }
+
+    return { data: parsed.data };
+  },
+  providesTags: (_result, _error, id) => [
+    { type: "Tickets", id },
+  ],
+}),
 
     createTicket: builder.mutation<
       CreateTicketResponse,
@@ -90,5 +124,6 @@ export const ticketsApi = createApi({
 
 export const {
   useGetTicketsQuery,
+  useGetTicketQuery,
   useCreateTicketMutation,
 } = ticketsApi;

@@ -49,3 +49,12 @@ export type TicketsResponse = z.infer<typeof ticketsResponseSchema>;
 export type CreateTicketResponse = z.infer<
   typeof createTicketResponseSchema
 >;
+
+
+export const ticketDetailsResponseSchema = z.object({
+  data: ticketSchema,
+});
+
+export type TicketDetailsResponse = z.infer<
+  typeof ticketDetailsResponseSchema
+>;

@@ -1,5 +1,6 @@
 "use client";
 import { useGetTicketsQuery } from "./tickets-api";
+import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectStatusFilter,
@@ -119,7 +120,16 @@ if (isError) {
           <tbody>
             {visibleTickets.map((ticket) => (
               <tr key={ticket.id}>
-                <th scope="row">{ticket.id}</th>
+                <th scope="row">
+                  
+            <Link
+                href={`/tickets/${encodeURIComponent(ticket.id)}`}
+                aria-label={`View ticket ${ticket.id}: ${ticket.subject}`}
+            >
+              {ticket.id}
+              </Link>
+              
+              </th>
                 <td>{ticket.subject}</td>
                 <td>{ticket.category}</td>
                 <td>{ticket.priority}</td>

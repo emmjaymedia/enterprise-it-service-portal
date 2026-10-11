@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { getTickets } from "@/lib/server/ticket-store";
 import {
   createTicketSchema,
   type Ticket,
@@ -7,50 +8,6 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const sampleTickets: Ticket[] = [
-  {
-    id: "TKT-001",
-    subject: "Unable to connect to office Wi-Fi",
-    description: "The office Wi-Fi connection fails on my laptop.",
-    category: "Network",
-    priority: "High",
-    status: "Open",
-  },
-  {
-    id: "TKT-002",
-    subject: "Microsoft Teams microphone issue",
-    description: "My microphone is unavailable during Teams calls.",
-    category: "Software",
-    priority: "Medium",
-    status: "In progress",
-  },
-  {
-    id: "TKT-003",
-    subject: "Laptop running slowly",
-    description: "My laptop becomes slow when opening applications.",
-    category: "Hardware",
-    priority: "Medium",
-    status: "Open",
-  },
-  {
-    id: "TKT-004",
-    subject: "Email setup assistance",
-    description: "I need help configuring email on my work device.",
-    category: "Account",
-    priority: "Low",
-    status: "Resolved",
-  },
-];
-
-// Local development only: one temporary store per server process.
-const demoGlobal = globalThis as typeof globalThis & {
-  serviceDeskTickets?: Ticket[];
-};
-
-function getTickets(): Ticket[] {
-  demoGlobal.serviceDeskTickets ??= [...sampleTickets];
-  return demoGlobal.serviceDeskTickets;
-}
 
 const headers = { "Cache-Control": "no-store" };
 
