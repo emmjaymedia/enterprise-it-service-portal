@@ -1,11 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import ticketFiltersReducer from "@/features/tickets/ticket-filters-slice";
+import { ticketsApi } from "@/features/tickets/tickets-api";
 
 export function makeStore() {
   return configureStore({
     reducer: {
       ticketFilters: ticketFiltersReducer,
+      [ticketsApi.reducerPath]: ticketsApi.reducer,
     },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(ticketsApi.middleware),
   });
 }
 

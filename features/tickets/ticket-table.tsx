@@ -1,5 +1,5 @@
 "use client";
-
+import { useGetTicketsQuery } from "./tickets-api";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectStatusFilter,
@@ -10,13 +10,6 @@ import styles from "@/app/page.module.scss";
 
 type TicketStatus = Exclude<TicketStatusFilter, "All">;
 
-type Ticket = {
-  id: string;
-  subject: string;
-  category: string;
-  priority: "High" | "Medium" | "Low";
-  status: TicketStatus;
-};
 
 const filters: TicketStatusFilter[] = [
   "All",
@@ -31,17 +24,44 @@ const statusClasses: Record<TicketStatus, string> = {
   Resolved: styles.resolved,
 };
 
-export default function TicketTable({
-  tickets,
-}: {
-  tickets: Ticket[];
-}) {
+export default function TicketTable() 
+  
+  {
   const dispatch = useAppDispatch();
   const status = useAppSelector(selectStatusFilter);
+
+  const {
+  data,
+  isLoading,
+  isFetching,
+  isError,
+  refetch,
+} = useGetTicketsQuery();
+
+const tickets = data?.data ?? [];
 
   const visibleTickets = tickets.filter(
     (ticket) => status === "All" || ticket.status === status,
   );
+
+if (isLoading) {
+  return <p role="status">Loading tickets…</p>;
+}
+
+if (isError) {
+  return (
+    <div role="alert">
+      <p>Unable to load tickets. Please try again.</p>
+      <button
+        type="button"
+        onClick={() => void refetch()}
+        disabled={isFetching}
+      >
+        {isFetching ? "Retrying…" : "Retry"}
+      </button>
+    </div>
+  );
+}
 
   return (
     <>
@@ -69,8 +89,10 @@ export default function TicketTable({
         </select>
 
         <p role="status">
-          Showing {visibleTickets.length} of {tickets.length} tickets
-        </p>
+  {isFetching
+    ? "Refreshing tickets…"
+    : `Showing ${visibleTickets.length} of ${tickets.length} tickets`}
+</p>
       </div>
 
       <div

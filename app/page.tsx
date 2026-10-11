@@ -1,47 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import TicketTable from "@/features/tickets/ticket-table";
+import { useGetTicketsQuery } from "@/features/tickets/tickets-api";
 import styles from "./page.module.scss";
-
-type TicketStatus = "Open" | "In progress" | "Resolved";
-
-type Ticket = {
-  id: string;
-  subject: string;
-  category: string;
-  priority: "High" | "Medium" | "Low";
-  status: TicketStatus;
-};
-
-const tickets: Ticket[] = [
-  {
-    id: "TKT-001",
-    subject: "Unable to connect to office Wi-Fi",
-    category: "Network",
-    priority: "High",
-    status: "Open",
-  },
-  {
-    id: "TKT-002",
-    subject: "Microsoft Teams microphone issue",
-    category: "Software",
-    priority: "Medium",
-    status: "In progress",
-  },
-  {
-    id: "TKT-003",
-    subject: "Laptop running slowly",
-    category: "Hardware",
-    priority: "Medium",
-    status: "Open",
-  },
-  {
-    id: "TKT-004",
-    subject: "Email setup assistance",
-    category: "Account",
-    priority: "Low",
-    status: "Resolved",
-  },
-];
 
 const assets = [
   { name: "Dell Latitude 5440", type: "Laptop", available: 3 },
@@ -49,15 +11,13 @@ const assets = [
   { name: "Logitech MK270", type: "Keyboard & mouse", available: 8 },
 ];
 
-
-
 function SummaryCard({
   label,
   value,
   description,
 }: {
   label: string;
-  value: number;
+  value: number | string;
   description: string;
 }) {
   return (
@@ -70,6 +30,9 @@ function SummaryCard({
 }
 
 export default function Home() {
+  const { data, isLoading, isError } = useGetTicketsQuery();
+  const tickets = data?.data ?? [];
+
   const openTickets = tickets.filter(
     (ticket) => ticket.status === "Open",
   ).length;
@@ -87,6 +50,12 @@ export default function Home() {
     0,
   );
 
+  const ticketCount = (count: number): number | string => {
+    if (isLoading) return "…";
+    if (isError) return "Unavailable";
+    return count;
+  };
+
   return (
     <div className={styles.shell}>
       <a className={styles.skipLink} href="#main-content">
@@ -94,15 +63,19 @@ export default function Home() {
       </a>
 
       <aside className={styles.sidebar}>
-        <Link className={styles.brand} href="/" aria-label="ServiceDesk home">
-  <span className={styles.brandMark} aria-hidden="true">
-    S
-  </span>
-  <span>
-    ServiceDesk
-    <small>IT Service & Asset Portal</small>
-  </span>
-</Link>
+        <Link
+          className={styles.brand}
+          href="/"
+          aria-label="ServiceDesk home"
+        >
+          <span className={styles.brandMark} aria-hidden="true">
+            S
+          </span>
+          <span>
+            ServiceDesk
+            <small>IT Service &amp; Asset Portal</small>
+          </span>
+        </Link>
 
         <p className={styles.navLabel}>WORKSPACE</p>
 
@@ -149,17 +122,17 @@ export default function Home() {
             <div className={styles.stats}>
               <SummaryCard
                 label="Open tickets"
-                value={openTickets}
+                value={ticketCount(openTickets)}
                 description="Awaiting support"
               />
               <SummaryCard
                 label="In progress"
-                value={inProgress}
+                value={ticketCount(inProgress)}
                 description="Being investigated"
               />
               <SummaryCard
                 label="Resolved tickets"
-                value={resolved}
+                value={ticketCount(resolved)}
                 description="Support completed"
               />
               <SummaryCard
@@ -169,6 +142,7 @@ export default function Home() {
               />
             </div>
           </section>
+
           <section
             id="tickets"
             className={styles.panel}
@@ -181,11 +155,15 @@ export default function Home() {
               </div>
 
               <span className={styles.count}>
-                {tickets.length} tickets
+                {isLoading
+                  ? "Loading…"
+                  : isError
+                    ? "Count unavailable"
+                    : `${tickets.length} tickets`}
               </span>
             </div>
 
-            <TicketTable tickets={tickets} />
+            <TicketTable />
           </section>
 
           <section
@@ -212,7 +190,7 @@ export default function Home() {
           </section>
 
           <footer className={styles.footer}>
-            Enterprise IT Service & Asset Portal · Portfolio project
+            Enterprise IT Service &amp; Asset Portal · Portfolio project
           </footer>
         </main>
       </div>

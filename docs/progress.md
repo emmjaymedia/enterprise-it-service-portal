@@ -15,7 +15,6 @@
 - Add the typed Redux store, hooks and client provider.
 - Add interactive ticket filtering.
 
-
 ## Later milestones
 - Ticket workflows
 - Database persistence
@@ -49,3 +48,10 @@ Verification results:
 - Passed lint, TypeScript and production build checks.
 - Filter state resets on page refresh.
 - Ticket data remains fictional and static.
+
+## Ticket API — first endpoint
+- Added GET /api/tickets using a Next.js Route Handler.
+- Verified the endpoint returns four fictional tickets.
+- Response includes data and metadata.
+- Passed lint, TypeScript and production build checks.
+- Dashboard connection, database and authentication remain pending.
