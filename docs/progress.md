@@ -140,3 +140,43 @@ Connect the dashboard and ticket table to the tickets API using Redux Toolkit Qu
 - Temporary server-process storage remains.
 - Authentication and ownership enforcement remain pending.
 - Assignment, comments and resolution follow.
+
+
+## Ticket assignment and status transitions
+
+### Goal
+Assign a support agent, start work, and resolve a ticket with a
+validated resolution note.
+
+### Changes
+- Added fictional support-agent assignment.
+- Added PATCH /api/tickets/[id].
+- Enforced Open → In progress → Resolved transitions on the server.
+- Required assignment before starting or resolving a ticket.
+- Required a resolution note of 10–2,000 characters.
+- Added version checks to reject stale updates.
+- Added support controls with pending, success and error feedback.
+- Refreshed ticket details and list caches after update attempts.
+
+### Verification
+- ESLint: passed.
+- TypeScript: passed.
+- Production build: passed.
+- Agent assignment API: passed — HTTP 200 with version increment.
+- Invalid transition: passed — HTTP 409.
+- Stale update: passed — HTTP 409.
+- Browser assignment → start work → resolve journey: passed.
+- Resolution note display: passed.
+- Dashboard status and counts after updates: passed.
+- Dedicated keyboard/mobile checks: pending.
+
+### Limitations
+- Fictional records stored temporarily in server-process memory.
+- Records may reset after a server restart or rebuild.
+- Authentication, role permissions and ownership checks are pending.
+- Version checks currently operate within a single server process.
+- PostgreSQL persistence remains planned for Stage 6.
+
+### Next milestone
+- Add validated ticket comments.
+- Record and display activity history for assignment and status changes.
