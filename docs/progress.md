@@ -129,12 +129,12 @@ Connect the dashboard and ticket table to the tickets API using Redux Toolkit Qu
 - Added loading, missing-ticket, error and retry states.
 
 ### Verification
-- Lint: pending.
-- TypeScript: pending.
-- Production build: pending.
-- Existing and newly created ticket details: pending.
-- Missing ticket API returns 404: pending.
-- Keyboard/mobile checks: pending.
+- Lint: passed.
+- TypeScript: passed.
+- Production build: passed.
+- Existing and newly created ticket details: passed.
+- Missing ticket API returns 404: passed.
+- Keyboard/mobile checks: passed.
 
 ### Limitations
 - Temporary server-process storage remains.
