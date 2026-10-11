@@ -97,6 +97,7 @@ Connect the dashboard and ticket table to the tickets API using Redux Toolkit Qu
 - Reset the status filter to All after successful creation.
 - Added pending, validation, success and failure feedback.
 
+
 ### Limitations
 - Fictional data with temporary server-process storage.
 - No authentication or employee ownership enforcement yet.
@@ -115,3 +116,27 @@ Connect the dashboard and ticket table to the tickets API using Redux Toolkit Qu
 - Ticket creation and retrieval: passed — GET returns three created
   tickets alongside four sample records.
 - Automatic dashboard refresh after submission: pending confirmation.
+
+
+## Ticket Details workflow
+
+### Changes
+- Moved temporary ticket storage into a shared server module.
+- Added GET /api/tickets/[id].
+- Added runtime validation for ticket details responses.
+- Added an RTK Query details endpoint.
+- Linked ticket IDs to individual details pages.
+- Added loading, missing-ticket, error and retry states.
+
+### Verification
+- Lint: pending.
+- TypeScript: pending.
+- Production build: pending.
+- Existing and newly created ticket details: pending.
+- Missing ticket API returns 404: pending.
+- Keyboard/mobile checks: pending.
+
+### Limitations
+- Temporary server-process storage remains.
+- Authentication and ownership enforcement remain pending.
+- Assignment, comments and resolution follow.
