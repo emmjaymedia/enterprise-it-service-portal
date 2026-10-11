@@ -1,5 +1,5 @@
 "use client";
-
+import TicketWorkflow from "@/features/tickets/ticket-workflow";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useGetTicketQuery } from "@/features/tickets/tickets-api";
@@ -95,6 +95,13 @@ export default function TicketDetailsPage() {
               {ticket.description}
             </p>
           </section>
+
+          <TicketWorkflow
+          key={ticket.id}
+          ticket={ticket}
+          refreshing={isFetching}
+          onRefresh={() => void refetch()}
+          />
 
           <p role="status">
             {isFetching ? "Refreshing ticket details…" : ""}

@@ -11,6 +11,7 @@ import {
   type TicketsResponse,
   ticketDetailsResponseSchema,
   type TicketDetailsResponse,
+  type UpdateTicketInput,
 } from "./ticket-schema"; 
 
 export type {
@@ -78,10 +79,53 @@ getTicket: builder.query<TicketDetailsResponse, string>({
 
     return { data: parsed.data };
   },
+  
   providesTags: (_result, _error, id) => [
     { type: "Tickets", id },
   ],
+
 }),
+
+
+updateTicket: builder.mutation<
+  TicketDetailsResponse,
+  { id: string; changes: UpdateTicketInput }
+>({
+  async queryFn({ id, changes }, api, extraOptions) {
+    const result = await baseQuery(
+      {
+        url: `tickets/${encodeURIComponent(id)}`,
+        method: "PATCH",
+        body: changes,
+      },
+      api,
+      extraOptions,
+    );
+
+    if (result.error) {
+      return { error: result.error };
+    }
+
+    const parsed = ticketDetailsResponseSchema.safeParse(result.data);
+
+    if (!parsed.success) {
+      return {
+        error: {
+          status: "CUSTOM_ERROR",
+          error:
+            "The update response was unexpected. Refresh the ticket to check its current state.",
+        },
+      };
+    }
+
+    return { data: parsed.data };
+  },
+  invalidatesTags: (_result, _error, { id }) => [
+    { type: "Tickets", id },
+    { type: "Tickets", id: "LIST" },
+  ],
+}),
+
 
     createTicket: builder.mutation<
       CreateTicketResponse,
@@ -126,4 +170,5 @@ export const {
   useGetTicketsQuery,
   useGetTicketQuery,
   useCreateTicketMutation,
+  useUpdateTicketMutation,
 } = ticketsApi;

@@ -1,3 +1,10 @@
+export const supportAgents = [
+  { id: "AGENT-001", name: "Amina Yusuf" },
+  { id: "AGENT-002", name: "Daniel Okoro" },
+] as const;
+
+export const agentIdSchema = z.enum(["AGENT-001", "AGENT-002"]);
+
 import { z } from "zod";
 
 export const ticketCategories = [
@@ -29,6 +36,9 @@ export const createTicketSchema = z
 export const ticketSchema = createTicketSchema.extend({
   id: z.string(),
   status: z.enum(["Open", "In progress", "Resolved"]),
+  assigneeId: agentIdSchema.nullable().optional(),
+  resolution: z.string().nullable().optional(),
+  version: z.number().int().nonnegative().optional(),
 });
 
 export const ticketsResponseSchema = z.object({
@@ -58,3 +68,33 @@ export const ticketDetailsResponseSchema = z.object({
 export type TicketDetailsResponse = z.infer<
   typeof ticketDetailsResponseSchema
 >;
+
+
+export const updateTicketSchema = z.discriminatedUnion("action", [
+  z
+    .object({
+      action: z.literal("assign"),
+      assigneeId: agentIdSchema,
+      expectedVersion: z.number().int().nonnegative(),
+    })
+    .strict(),
+  z
+    .object({
+      action: z.literal("start"),
+      expectedVersion: z.number().int().nonnegative(),
+    })
+    .strict(),
+  z
+    .object({
+      action: z.literal("resolve"),
+      resolution: z
+        .string()
+        .trim()
+        .min(10, "Use at least 10 characters for the resolution.")
+        .max(2000, "Keep the resolution within 2,000 characters."),
+      expectedVersion: z.number().int().nonnegative(),
+    })
+    .strict(),
+]);
+
+export type UpdateTicketInput = z.infer<typeof updateTicketSchema>;
