@@ -180,3 +180,29 @@ validated resolution note.
 ### Next milestone
 - Add validated ticket comments.
 - Record and display activity history for assignment and status changes.
+
+## Stitch frontend — W01 operations dashboard
+
+- Imported the supplied PRD and design notes into `docs/`.
+- Added W01 at `/` and `/workspace`, a reusable workspace shell, icons,
+  metric cards and a CSS trend chart; retained SCSS Modules.
+- Added 42 deterministic frontend demo records through an injected RTK Query
+  endpoint. No backend routes, server storage or dependencies were changed.
+- Added team/date scope, actionable metric cards, worklist search and pagination,
+  priority distribution, team queue load, notifications and native ticket previews.
+- Preserved the previous ticket workspace at `/tickets` and updated the ticket
+  details return link. New-ticket actions use the existing creation form.
+- Marked unavailable modules as planned. Historical trend and SLA attainment
+  values are explicitly illustrative; these are not operational measurements.
+- User waived the need for the previously referenced skills.
+
+### Verification
+
+- ESLint, TypeScript and production build passed.
+- Headless Chrome checked dashboard counts, team/date filtering, KPI drill-down,
+  pagination, search and empty state, refresh, notifications, ticket preview and
+  Escape dismissal, mobile drawer, and existing ticket details/API navigation.
+- Desktop screenshot reviewed; no document overflow at 390px or 768px.
+- No browser page errors during the checked flows.
+- Supplied ZIP remains local and uncommitted. W02/W03 implementation and full
+  keyboard/screen-reader review remain future work.

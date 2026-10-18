@@ -13,21 +13,23 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - Continue from the existing Enterprise IT Service & Asset Portal implementation;
   preserve existing work and conventions.
-- Follow the `enterprise-service-portal` and `frontend-design` skills when
-  available. Both are currently pending: neither was found locally.
+- Proceed with the supplied PRD, Stitch PNGs, HTML and design notes. The user
+  has explicitly waived the need for the previously referenced skills.
 - Expect Google Stitch exports organized by screen folder, containing HTML,
   PNGs and supporting assets. PNGs are visual references; HTML is an
-  implementation reference. Exports have not yet been supplied locally.
+  implementation reference. The source ZIP is available locally.
 - Convert supplied references into reusable Next.js, React and TypeScript
   components. Retain SCSS Modules and Redux Toolkit/RTK Query conventions.
 - Build and refine the frontend first with mock data and working interactions.
   Backend implementation comes after frontend approval. Preserve existing mock
   API behavior during frontend work.
-- Use the IT ticketing PRD as the functional specification when supplied;
-  it is currently pending locally.
+- Use `docs/it-ticketing-system-prd.md` as the functional specification and
+  `docs/stitch-design.md` as supporting design guidance. Use the supplied PNGs
+  as the visual reference when generated HTML and design notes differ.
 - If any referenced skill or file is unavailable, identify it as pending.
   Do not invent its contents or claim to have loaded it.
 - This direction supersedes older backend milestone ordering in historical docs.
-- During this GitHub upload task, do not implement new screens or change the backend.
+- The initial GitHub upload is complete. Current work implements the supplied
+  frontend references; backend changes still require frontend approval.
 - Keep credentials, local environment files, dependencies and generated output
   out of Git. Keep `.env.example` limited to documentation and placeholders.

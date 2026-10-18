@@ -28,7 +28,7 @@ export default function TicketDetailsPage() {
 
   return (
     <main className={styles.page}>
-      <Link className={styles.backLink} href="/#tickets">
+      <Link className={styles.backLink} href="/tickets#tickets">
         ← Back to tickets
       </Link>
 

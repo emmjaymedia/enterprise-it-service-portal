@@ -15,26 +15,40 @@ PostgreSQL persistence are not implemented yet.
 
 ## Development direction
 
-- Follow the `enterprise-service-portal` and `frontend-design` skills when available.
-- Google Stitch exports will be supplied in screen folders containing HTML,
+- Proceed using the supplied references; the user has waived the need for
+  the previously referenced skills.
+- Google Stitch exports are supplied in screen folders containing HTML,
   PNGs and supporting assets. Use PNGs as visual references and HTML as
   implementation references.
 - Convert those references into reusable Next.js, React and TypeScript
   components while retaining SCSS Modules and Redux Toolkit/RTK Query conventions.
 - Build and refine the frontend first with mock data and working interactions.
   Backend implementation follows frontend approval. Preserve the existing mock APIs.
-- Use the IT ticketing PRD as the functional specification when supplied.
+- Use `docs/it-ticketing-system-prd.md` as the functional specification.
 - Identify unavailable skills and referenced files as pending; do not invent
   their contents or claim they have been loaded.
-- This GitHub upload task adds documentation and Git hygiene only; it does not
-  implement new screens or change the backend.
+- Implement the supplied frontend references incrementally, keeping backend
+  changes gated on frontend approval.
 
-## Pending inputs
+## Design references and frontend progress
 
-The `enterprise-service-portal` and `frontend-design` skills were not found in
-this repository or the local skills directory. Google Stitch screen exports
-and the IT ticketing PRD have not been supplied locally. These inputs are
-pending and have not been loaded.
+The supplied Stitch archive contains 84 HTML/PNG screen pairs, mobile and Arabic
+variants, the PRD and design notes. The PRD is retained at
+`docs/it-ticketing-system-prd.md`; the design notes are at `docs/stitch-design.md`.
+The original archive remains local and uncommitted.
+
+- `/` and `/workspace`: W01 operations dashboard, reusable workspace shell,
+  team/date filters, mock metrics, charts, priority breakdown, searchable worklist,
+  pagination and native ticket preview dialog.
+- Dashboard records are frontend-only fixtures served through the existing RTK
+  Query service. Their IDs and metrics are separate from the existing ticket API.
+  Trend and attainment figures are explicitly labeled as illustrative history.
+- `/tickets`: preserved working ticket workspace, creation and filtering.
+- `/tickets/[id]`: existing assignment and resolution workflow.
+- Other modules are visibly marked as planned until implemented.
+
+The frontend remains the current priority. Backend implementation follows
+frontend approval. Next screens: W02 Ticket Queue and W03 Agent Ticket Detail.
 
 ## Local development
 
