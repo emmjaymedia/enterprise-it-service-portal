@@ -5,12 +5,14 @@ Continue from the existing Enterprise IT Service & Asset Portal implementation.
 ## Current implementation
 
 Next.js App Router, React and TypeScript, with SCSS Modules, Redux Toolkit
-and RTK Query. The dashboard supports ticket listing, status filtering,
-creation, ticket details, support-agent assignment and validated status
-transitions with resolution notes.
+and RTK Query. The Stitch workspace includes the operations dashboard, ticket
+queue and agent details with interactive frontend mock state. The original
+ticket workspace retains ticket creation, assignment and validated resolution
+through the existing API.
 
-Tickets use fictional data held temporarily in server-process memory and may
-reset after a restart or rebuild. Authentication, ownership permissions and
+The original API uses fictional data held in server-process memory and may
+reset after a restart or rebuild. The new workspace uses a separate frontend
+cache that resets on a full page reload. Authentication, ownership permissions and
 PostgreSQL persistence are not implemented yet.
 
 ## Development direction
@@ -39,16 +41,28 @@ The original archive remains local and uncommitted.
 
 - `/` and `/workspace`: W01 operations dashboard, reusable workspace shell,
   team/date filters, mock metrics, charts, priority breakdown, searchable worklist,
-  pagination and native ticket preview dialog.
-- Dashboard records are frontend-only fixtures served through the existing RTK
-  Query service. Their IDs and metrics are separate from the existing ticket API.
-  Trend and attainment figures are explicitly labeled as illustrative history.
+  pagination and drill-down links into the filtered queue.
+- `/workspace/tickets`: W02 queue with URL-backed search and filters, removable
+  filter chips, sorting, pagination, column selection, personal saved views and
+  CSV export. Bulk assignment, team handoff, priority and status updates show
+  per-row failures and retain only failed rows for retry. Scope changes clear selection.
+- `/workspace/tickets/[id]`: W03 detail refinement with conversation visibility
+  filters, separate public/internal drafts, failed-send feedback, properties,
+  activity history, resolution notes and reopening.
+- Dashboard, queue and detail records share frontend state through RTK Query.
+  Saved views and drafts use Redux. All survive client navigation and reset on
+  full page reload; nothing in these new flows writes to the backend.
+- The dashboard fixture IDs remain separate from the original ticket API IDs.
+  Trend and attainment figures are explicitly illustrative. Attachments retain
+  filenames only; no file content is uploaded.
 - `/tickets`: preserved working ticket workspace, creation and filtering.
 - `/tickets/[id]`: existing assignment and resolution workflow.
 - Other modules are visibly marked as planned until implemented.
 
 The frontend remains the current priority. Backend implementation follows
-frontend approval. Next screens: W02 Ticket Queue and W03 Agent Ticket Detail.
+frontend approval. W02 and the requested W03 core interactions are ready for
+visual review. Advanced detail workflows, persistence and permissions remain
+future milestones.
 
 ## Local development
 

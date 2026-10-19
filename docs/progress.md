@@ -206,3 +206,53 @@ validated resolution note.
 - No browser page errors during the checked flows.
 - Supplied ZIP remains local and uncommitted. W02/W03 implementation and full
   keyboard/screen-reader review remain future work.
+
+
+## Stitch frontend — W02 queue and W03 detail refinement
+
+### Delivered
+
+- `/workspace/tickets` includes URL-backed search, team/service/priority/status
+  scope, date and attachment filters, removable chips, sort, pagination,
+  optional columns, personal saved views and CSV export.
+- Saved views restore filters, sort and columns; duplicate names are rejected.
+- Selection clears on filter, sort, page, saved-view and browser-history changes.
+- Mock bulk assignment, team handoff, priority and status actions report individual
+  failures. Successful rows are deselected; retry operates only on failed rows.
+  INC-1044 demonstrates a protected major incident requiring individual review.
+- Dashboard metric cards preserve team/date/search scope when opening the queue;
+  dashboard worklist tickets open the new detail route.
+- `/workspace/tickets/[id]` includes sibling navigation, conversation visibility
+  filters, clearly distinct public replies and internal notes, separate drafts,
+  attachment name references, failed-send recovery, editable properties,
+  version guards, activity history, resolution notes and reopening.
+- Detail controls remain pending until the updated revision is visible, preventing
+  rapid successive edits from accidentally using the previous revision.
+- Mock records share RTK Query cache; saved views and drafts use Redux. State lasts
+  across client navigation and resets on full reload. Original APIs are unchanged.
+
+### Verification
+
+- ESLint, TypeScript and production build passed.
+- Browser checks passed for dashboard drill-down to the matching eight-ticket
+  unassigned queue, partial bulk success, per-row errors, failed-only retry,
+  cache-preserving refresh, selection clearing, saved-view restore and duplicate
+  validation, search/empty state, chips, sorting, pagination and CSV contents.
+- Browser checks passed for separate drafts, failed-send preservation, attachment
+  references, public-only filtering, rapid property edits, paused status, activity,
+  resolution, resolved composer lock, reopening and team handoff.
+- Drafts survived queue/detail client navigation. The existing GET /api/tickets
+  still returned its four original TKT records; new interactions made no API writes.
+- Desktop screenshots reviewed. Queue/detail had no document overflow at 390px
+  and 768px. Mobile navigation, keyboard skip link, Space selection, Enter actions,
+  dialog Escape/focus restoration and composer keyboard access passed.
+- No browser console or page errors in the checked flows.
+
+### Limits and review
+
+- Frontend demo only; saved views, drafts and changes reset on page reload.
+- Attachment filenames are retained without upload or file-content persistence.
+- SLA state is illustrative; there is no live countdown.
+- Source ZIP remains local and uncommitted. Backend implementation still follows
+  frontend approval. Full assistive-technology review and advanced W03 workflows
+  (tasks, time logging, escalation and linked-record editing) remain future work.
