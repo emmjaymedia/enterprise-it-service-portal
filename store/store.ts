@@ -4,11 +4,14 @@ import { ticketsApi } from "@/features/tickets/tickets-api";
 
 import workspaceReducer from "@/features/workspace/workspace-slice";
 
+import portalReducer from "@/features/portal/portal-slice";
+
 export function makeStore() {
   return configureStore({
     reducer: {
       ticketFilters: ticketFiltersReducer,
       workspace: workspaceReducer,
+      portal: portalReducer,
       [ticketsApi.reducerPath]: ticketsApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>

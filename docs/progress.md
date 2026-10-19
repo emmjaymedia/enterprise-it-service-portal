@@ -256,3 +256,94 @@ validated resolution note.
 - Source ZIP remains local and uncommitted. Backend implementation still follows
   frontend approval. Full assistive-technology review and advanced W03 workflows
   (tasks, time logging, escalation and linked-record editing) remain future work.
+
+## Stitch frontend — E01 employee home and E02 report an issue
+
+- Added `/portal` and `/portal/tickets/new` using the supplied English PNG/HTML
+  references, a shared responsive employee shell, SCSS Modules and a Redux slice.
+- Home includes help search and empty results, suggested guides, service status,
+  own mock tickets with public updates, assigned device and issue reporting.
+- Issue reporting includes field validation, service/device selection, impact and
+  urgency, PRD priority matrix and response targets, contextual guides, session
+  drafts, attachment selection/removal/validation, review and guarded submission.
+- Added a simulated submission failure with preserved input and retry, an inline
+  receipt, and client navigation back to the new ticket on home.
+- Draft text survives reload in session storage; ticket records last until reload.
+  Attachments retain names and sizes only, without uploads or security scanning.
+  No backend routes or existing mock API behavior changed. Catalog remains planned;
+  dedicated E03/E04/E05 screens, live status, notifications and authentication remain
+  future work. Knowledge guide content is illustrative.
+
+### Verification
+
+- ESLint and TypeScript passed. Production build passed with `--webpack`;
+  Turbopack could not bind a worker port in this environment.
+- Headless Chrome passed home search, required-field validation, P1 calculation,
+  attachment rejection, session draft recovery, failed submission and retry,
+  receipt and client navigation to the created ticket, with no page errors.
+- No document overflow at 390px or 768px on either route. Desktop issue and tablet
+  screenshots reviewed. Full assistive-technology review remains pending.
+- Source ZIP remains local and uncommitted. Backend still follows frontend approval.
+
+## Stitch frontend — E03 confirmation and E04 My Tickets
+
+- Added `/portal/tickets/confirmation/[id]` and `/portal/tickets`, based on the
+  supplied English desktop/mobile references. E02 now navigates to the receipt.
+- Receipts include timestamp in UTC, subject/category, priority, illustrative
+  response/resolution targets, clipboard copy and next steps. Missing session
+  records advise checking tickets before resubmitting; no notification delivery
+  is claimed.
+- My Tickets includes Active, Resolved & Closed and All tabs with counts,
+  text/status/service/date filters, pagination, empty results, mobile cards and
+  a public-only read-only preview. Preview receives keyboard focus and restores
+  its opener on close. Unknown records display an unavailable state.
+- Added three own fictional historical tickets to exercise resolved/closed views.
+  Home counts only active records; home and navigation link to My Tickets.
+- Demo date filters use the latest mock update as a stable reference date.
+  Ticket records reset on full reload; session text drafts remain separate.
+  Attachment references retain names/sizes only. Existing APIs are unchanged.
+- E05 conversation and requester actions remain pending; receipt “View Ticket
+  Details” opens the E04 preview until that screen is implemented.
+
+### Verification
+
+- ESLint, TypeScript and production build (`--webpack`) passed.
+- Chrome passed tabs/counts, pagination, search/date/status filtering, empty
+  results, preview focus, E02-to-receipt navigation, clipboard contents, created
+  ticket and attachment references, missing/reloaded record states.
+- Both routes had no document overflow at 390px or 768px; desktop receipt and
+  mobile ticket-list screenshots reviewed. No page errors in tested flows.
+- Backend work still follows frontend approval; full assistive-technology review
+  and E05 interactions remain future work. Source ZIP remains uncommitted.
+
+## Stitch frontend — E05 employee ticket detail
+
+- Added `/portal/tickets/[id]` using the supplied desktop/mobile E05 references.
+  Ticket list, receipt and home actions now open the full employee detail route.
+- Added public-only messages, owner/team, original request, device, illustrative
+  response/resolution targets, help links and attachment filename references.
+- Public replies use Redux with per-ticket text drafts across client navigation,
+  pending state, duplicate-send guard and simulated failure with preserved input.
+  Replying to Pending requester resumes the mock record to In progress.
+- Resolved tickets offer confirmation to Closed or reopening to Open with a
+  required reason. Eligible unfulfilled requests can be cancelled with a reason.
+  Reducers enforce eligible states; Closed and Cancelled are read-only.
+- Added native action dialogs with Escape/focus restoration and visible outcomes.
+  Added fictional pending-requester and cancellable-request records for review.
+  Cancelled records are excluded from active counts and available under All.
+- Existing backend/API behavior remains unchanged. Drafts and mutations reset on
+  reload. Attachments retain names/sizes only; downloads are unavailable because
+  no file contents are uploaded. Live SLA clocks, auto-close, notifications,
+  authentication/authorization and closed-ticket privileged reopening are pending.
+
+### Verification
+
+- ESLint, TypeScript and Webpack production build passed.
+- Chrome passed reply-draft client navigation, attachment rejection, failed send
+  with successful retry, single message insertion, Pending requester resumption,
+  reopen reason validation, confirmation and read-only closure, cancellation and
+  ticket-list status synchronization, missing-record state and dialog Escape.
+- Desktop and 390px screenshots reviewed; no document overflow on active,
+  resolved and closed details at 390px or 768px. No page errors in checked flows.
+- Full assistive-technology review remains pending. Backend still follows frontend
+  approval; source ZIP remains local and uncommitted.
