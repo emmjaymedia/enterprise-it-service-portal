@@ -4,6 +4,10 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Icon, { type IconName } from "./icon";
+import SharedNavigation from "@/features/shared/shared-navigation";
+import SessionBanner from "@/features/shared/session-banner";
+import { useAppDispatch } from "@/store/hooks";
+import { setContext } from "@/features/shared/shared-slice";
 import styles from "./workspace-shell.module.scss";
 
 const modules: { label: string; icon: IconName }[] = [
@@ -26,7 +30,12 @@ export default function WorkspaceShell({
   onSearch: (value: string) => void;
 }) {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setContext("agent"));
+  }, [dispatch]);
   const pathname = usePathname();
+  const inOverview = pathname === "/" || pathname === "/workspace";
   const inTickets = pathname.startsWith("/workspace/tickets");
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
@@ -41,7 +50,7 @@ export default function WorkspaceShell({
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, [menuOpen]);
-  const [notifications, setNotifications] = useState(false);
+
   return (
     <div className={styles.shell}>
       <a href="#main-content" className={styles.skip}>
@@ -63,8 +72,8 @@ export default function WorkspaceShell({
           <p>CORE</p>
           <Link
             href="/"
-            aria-current={!inTickets ? "page" : undefined}
-            className={!inTickets ? styles.active : undefined}
+            aria-current={inOverview ? "page" : undefined}
+            className={inOverview ? styles.active : undefined}
             onClick={() => setMenuOpen(false)}
           >
             <Icon name="grid" />
@@ -148,32 +157,6 @@ export default function WorkspaceShell({
             <Icon name="plus" size={18} />
             <span>New ticket</span>
           </Link>
-          <div className={styles.notificationWrap}>
-            <button
-              type="button"
-              className={styles.notification}
-              aria-label="Notifications"
-              aria-expanded={notifications}
-              onClick={() => setNotifications(!notifications)}
-            >
-              <Icon name="bell" />
-              <span>1</span>
-            </button>
-            {notifications ? (
-              <div className={styles.popover}>
-                <strong>Demo notifications</strong>
-                <p>
-                  INC-1044 · Payroll service has breached its resolution SLA.
-                </p>
-                <a
-                  href="/workspace#incident"
-                  onClick={() => setNotifications(false)}
-                >
-                  View incident alert →
-                </a>
-              </div>
-            ) : null}
-          </div>
           <div className={styles.profile}>
             <span className={styles.avatar}>DC</span>
             <span>
@@ -181,6 +164,8 @@ export default function WorkspaceShell({
             </span>
           </div>
         </header>
+        <SharedNavigation context="agent" />
+        <SessionBanner />
         <main id="main-content" className={styles.main} tabIndex={-1}>
           {children}
         </main>

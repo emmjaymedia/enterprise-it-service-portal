@@ -347,3 +347,61 @@ validated resolution note.
   resolved and closed details at 390px or 768px. No page errors in checked flows.
 - Full assistive-technology review remains pending. Backend still follows frontend
   approval; source ZIP remains local and uncommitted.
+
+## Batch 3 — Access, shared navigation and system states
+
+### Delivered
+
+- A01 `/login`: responsive organization/local sign-in preview, employee/support
+  destination, password visibility and generic invalid/disabled-account errors,
+  SSO-unavailable and rate-limit demo outcomes. Failed attempts retain email only.
+- A02 `/password/reset`: neutral email acknowledgement, SSO guidance, mock reset
+  token, password policy/mismatch checks and invalid/used-token recovery. No email
+  or real token is issued and no password is persisted or sent.
+- A03 `/verify`: active-challenge requirement, authenticator and recovery-code
+  previews, two-minute expiry, three-attempt limit, resend and cancel/sign-out.
+  Uses explicit demo codes; there is no authentication or hardware/push integration.
+- E14 `/notifications`: own-context unread/all views, category filters, selection,
+  mark read/all read, clear read, pagination, empty and unavailable-record states.
+  Shared navigation unread counts update immediately and are delivery-independent.
+- E15 `/profile`: directory-managed identity, per-context language/timezone/date
+  format preview, optional notification channels, mandatory security notices,
+  save/cancel/defaults, simulated save failure/retry and mock session revocation
+  with confirmation. Real translation and app-wide date rendering remain pending.
+- S01 `/search`: employee-own tickets/public content or support mock metadata,
+  grouped ticket/article/asset/service/self-profile results, type counts/filters,
+  recent per-context searches, clear history, empty and recoverable failure states.
+  Does not index internal message bodies. Support results reuse RTK Query data.
+- S02 `/403`, `/404`, `/maintenance`, `/offline`, `/session-expired`, with generic
+  recovery guidance, reference copying, retry/sign-in/navigation actions. Added
+  `/system-states` gallery and an actual app not-found boundary for unmatched URLs.
+  Named state routes are UI previews, not platform HTTP/access enforcement.
+- Shared Search/Notifications/Profile/Sign-out navigation in employee and support
+  shells, contextual account pages, Ctrl/Cmd+K search shortcut, and an expired/
+  signed-out banner. Header help search uses client routing to preserve drafts.
+- Backend APIs, existing workspace search behavior and ticket workflows preserved.
+  E13 service status remains in Batch 9; no new backend/auth dependencies added.
+
+### Verification and limits
+
+- ESLint, TypeScript and Webpack production build passed.
+- Chrome passed invalid sign-in/password clearing, MFA recovery, neutral recovery,
+  invalid/used reset tokens, password mismatch, notification read/badge/bulk/empty
+  behavior, preference failure/retry and navigation persistence, session-revoke
+  dialog Escape/confirmation, scoped search/failure/history and support navigation.
+- Employee ticket reply draft survived client navigation through sign-out,
+  session-expired state, SSO/MFA preview and return to the ticket.
+- Reference copy and actual unknown-route HTTP 404 passed. No document overflow at
+  390px, 768px or 1440px across the checked access/account/search/state screens;
+  reviewed desktop and mobile screenshots. No page errors in those flows.
+- State is frontend Redux demo state and resets on full reload; issue-report text
+  retains its existing session-storage behavior. Directly loaded shared pages use
+  employee preview context. Access restrictions, SSO, MFA, session revocation,
+  delivery channels and search permissions are simulated, not security controls.
+- Full assistive-technology review and real identity/delivery integrations remain
+  pending. Source ZIP stays local and uncommitted; backend follows frontend approval.
+- Additional edge checks passed: SSO-unavailable/rate-limit outcomes, challenge
+  expiry and resend, three-attempt verification lockout, populated MFA view,
+  header-search recent history and draft retention, Ctrl+K navigation,
+  date-format preview/cancel, and original GET API returning four TKT records.
+- Shared workspace pages no longer mark Overview as the active navigation item.

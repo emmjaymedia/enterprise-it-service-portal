@@ -90,3 +90,20 @@ TypeScript compiler. Production builds fetch Geist fonts from Google and
 require network access. See `AGENTS.md` for project instructions and
 `docs/progress.md` for historical implementation notes. The frontend-first
 direction above takes precedence over older backend milestones in those notes.
+
+## Frontend Batch 3 previews
+
+- `/login`, `/password/reset`, `/verify`: simulated sign-in, recovery and MFA.
+  Use fictional credentials. After sign-in, use `123456` or the recovery code
+  `DEMO-RECOVERY`. Reset uses `DEMO-RESET` after requesting a mock reset.
+- `/notifications`, `/profile`, `/search`: shared account pages with context from
+  the employee or support shell. Search, notification read state and saved
+  preferences survive client navigation and reset on reload.
+- `/system-states`: access denied, not found, maintenance, offline and expired
+  session previews. Unknown URLs use the shared not-found design.
+- Shared navigation is available in both shells; Ctrl/Cmd+K opens global search.
+
+These are frontend mocks. No authentication, authorization, email delivery,
+credential changes or real session revocation occurs. Existing backend routes
+are unchanged. Preferences include a regional preview; application translation
+and app-wide timezone rendering remain future work.

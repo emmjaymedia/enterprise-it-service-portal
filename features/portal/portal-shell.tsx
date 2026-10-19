@@ -1,7 +1,11 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useAppDispatch } from "@/store/hooks";
+import { setContext, rememberSearch } from "@/features/shared/shared-slice";
+import SharedNavigation from "@/features/shared/shared-navigation";
+import SessionBanner from "@/features/shared/session-banner";
 import Icon from "@/components/workspace/icon";
 import s from "./portal.module.scss";
 export default function PortalShell({
@@ -10,7 +14,11 @@ export default function PortalShell({
   children: React.ReactNode;
 }) {
   const path = usePathname();
-  const [notice, setNotice] = useState(false);
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setContext("employee"));
+  }, [dispatch]);
   return (
     <div className={s.portal}>
       <a className={s.skip} href="#portal-main">
@@ -26,7 +34,21 @@ export default function PortalShell({
           </span>
         </Link>
         <span className={s.tag}>Employee Portal</span>
-        <form action="/portal" className={s.headerSearch}>
+        <form
+          action="/search"
+          className={s.headerSearch}
+          onSubmit={(event) => {
+            event.preventDefault();
+            const query = new FormData(event.currentTarget).get("q");
+            dispatch(
+              rememberSearch({
+                context: "employee",
+                query: String(query ?? ""),
+              }),
+            );
+            router.push(`/search?q=${encodeURIComponent(String(query ?? ""))}`);
+          }}
+        >
           <Icon name="search" size={16} />
           <input
             name="q"
@@ -34,24 +56,13 @@ export default function PortalShell({
             placeholder="Search for help, articles, services, or tickets…"
           />
         </form>
-        <button
-          className={s.iconButton}
-          aria-label="Notifications"
-          aria-expanded={notice}
-          onClick={() => setNotice(!notice)}
-        >
-          <Icon name="bell" />
-        </button>
         <span className={s.profile}>
           Amina Yusuf<small>Sales Lead · Demo employee</small>
         </span>
         <span className={s.avatar}>AY</span>
       </header>
-      {notice && (
-        <div className={s.notification} role="status">
-          You’re all caught up. No new notifications.
-        </div>
-      )}
+      <SharedNavigation context="employee" />
+      <SessionBanner />
       <nav className={s.nav} aria-label="Employee navigation">
         <Link
           aria-current={path === "/portal" ? "page" : undefined}
