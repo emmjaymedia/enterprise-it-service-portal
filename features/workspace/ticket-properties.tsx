@@ -13,6 +13,7 @@ export default function TicketProperties({ ticket }: { ticket: DemoTicket }) {
   const [pendingVersion, setPendingVersion] = useState(0);
   const pending = isLoading || ticket.version < pendingVersion;
   const [feedback, setFeedback] = useState("");
+  const [reopenReason, setReopenReason] = useState("");
   async function update(value: TicketChange) {
     setPendingVersion(ticket.version + 1);
     try {
@@ -91,6 +92,19 @@ export default function TicketProperties({ ticket }: { ticket: DemoTicket }) {
           ))}
         </select>
       </label>
+      {ticket.status === "Resolved" && (
+        <label>
+          Reopening reason *
+          <textarea
+            rows={3}
+            minLength={10}
+            maxLength={2000}
+            value={reopenReason}
+            onChange={(e) => setReopenReason(e.target.value)}
+            placeholder="Why does this ticket need more investigation?"
+          />
+        </label>
+      )}
       <label>
         Current status
         <select
@@ -102,6 +116,7 @@ export default function TicketProperties({ ticket }: { ticket: DemoTicket }) {
               kind: "status",
               value: e.target.value as
                 "Open" | "In progress" | "Pending requester",
+              reason: ticket.status === "Resolved" ? reopenReason : undefined,
             })
           }
         >

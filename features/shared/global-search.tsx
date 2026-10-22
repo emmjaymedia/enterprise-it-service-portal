@@ -38,7 +38,7 @@ export default function GlobalSearch({
       title: a.title,
       type: "Articles",
       snippet: a.text,
-      href: "/portal#guides",
+      href: "/portal/knowledge",
     })),
     {
       id: "ASSET-MBP-9812",
@@ -55,7 +55,7 @@ export default function GlobalSearch({
       title: "Corporate VPN",
       type: "Services",
       snippet: "Remote access help and troubleshooting",
-      href: "/portal#guides",
+      href: "/portal/knowledge",
     },
     {
       id: context === "employee" ? "ME-AY" : "ME-DC",

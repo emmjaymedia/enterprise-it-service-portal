@@ -2,6 +2,19 @@
 
 Continue from the existing Enterprise IT Service & Asset Portal implementation.
 
+## Screen review
+
+All 62 PRD screen layouts are reachable, together with the design-system and
+interface-state references. Open `/workspace` to use the left sidebar, `/admin`
+for all administration pages, `/portal` for employee screens, or `/screens` for
+the complete directory.
+
+The current priority is screen coverage and navigation. New pages contain sample
+content, working page tabs and links, and local layout previews. New workflow
+buttons explain that implementation is pending; they do not save, publish or
+submit data. Existing ticket, approval and feedback demo workflows are preserved.
+See `docs/screen-coverage.md` for the route inventory and implementation boundary.
+
 ## Current implementation
 
 Next.js App Router, React and TypeScript, with SCSS Modules, Redux Toolkit
@@ -57,7 +70,8 @@ The original archive remains local and uncommitted.
   filenames only; no file content is uploaded.
 - `/tickets`: preserved working ticket workspace, creation and filtering.
 - `/tickets/[id]`: existing assignment and resolution workflow.
-- Other modules are visibly marked as planned until implemented.
+- All remaining modules are reachable as screen previews; their new business
+  workflows are deferred until feature implementation.
 
 The frontend remains the current priority. Backend implementation follows
 frontend approval. W02 and the requested W03 core interactions are ready for
@@ -107,3 +121,36 @@ These are frontend mocks. No authentication, authorization, email delivery,
 credential changes or real session revocation occurs. Existing backend routes
 are unchanged. Preferences include a regional preview; application translation
 and app-wide timezone rendering remain future work.
+
+## Batch 4 — Approvals, resolution, handoff and feedback
+
+- `/portal/approvals`: pending/completed approvals with search, category and age
+  filters and individual review links.
+- `/portal/approvals/REQ-2081`: scope, justification, cost, workflow and approval,
+  rejection, clarification and permitted delegation with confirmation dialogs.
+- `REQ-2074` demonstrates blocked self-approval. The decision page includes an
+  explicit demo control to exercise changed-request revision handling.
+
+Approval decisions and note drafts use Redux and reset on reload. No real
+approvals, provisioning, notification delivery or durable audit records occur.
+
+- `/workspace/tickets/INC-1042#resolve`: W07 resolution code, public solution,
+  optional public article reference, linked-task/approval gates and notification
+  preview. `INC-1102` demonstrates an incomplete task; `INC-1103` a pending approval.
+- `/workspace/tickets/INC-1042#escalate`: W08 team transfer, specialist reassignment
+  and level escalation, reason/internal handoff notes, optional public update,
+  destination availability/access checks and unchanged illustrative SLA state.
+  `INC-1044` demonstrates a sensitive record without an eligible transfer team.
+- `/portal/tickets/REQ-1039/feedback`: E16 five-point feedback, optional criteria
+  and comment, submission confirmation and editing. `INC-1028` demonstrates
+  expired feedback; active, reopened and missing records have recovery states.
+- The shared `INC-1042` frontend fixture supports agent resolution → employee
+  feedback → requester reopen → agent resolution again, with one rating per
+  resolution cycle. Handoff ownership/public updates also reach the matching
+  employee fixture; internal notes stay in the support workspace.
+
+Feedback uses a five-day preview policy and a stable 22 October 2026 demo clock;
+new resolutions use their actual timestamp if later. Dialogs include explicit
+failed-save/conflict demos, and feedback includes failure/expiry previews.
+Task completion, later approval stages, live SLA clocks, real delivery and backend
+security/persistence remain future work. Existing backend APIs are unchanged.

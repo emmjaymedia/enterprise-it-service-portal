@@ -3,23 +3,19 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import Icon, { type IconName } from "./icon";
+import Icon from "./icon";
 import SharedNavigation from "@/features/shared/shared-navigation";
 import SessionBanner from "@/features/shared/session-banner";
 import { useAppDispatch } from "@/store/hooks";
 import { setContext } from "@/features/shared/shared-slice";
 import styles from "./workspace-shell.module.scss";
 
-const modules: { label: string; icon: IconName }[] = [
-  { label: "Major Incidents", icon: "alert" },
-  { label: "Service Requests", icon: "ticket" },
-  { label: "Approvals", icon: "check" },
-  { label: "Problems", icon: "alert" },
-  { label: "Changes", icon: "calendar" },
-  { label: "Assets & CMDB", icon: "box" },
-  { label: "Knowledge Base", icon: "book" },
-  { label: "Reports", icon: "chart" },
-];
+import {
+  workspaceMenu,
+  adminMenu,
+  moduleNavigation,
+} from "@/features/screens/navigation";
+
 export default function WorkspaceShell({
   children,
   search,
@@ -36,7 +32,9 @@ export default function WorkspaceShell({
   }, [dispatch]);
   const pathname = usePathname();
   const inOverview = pathname === "/" || pathname === "/workspace";
-  const inTickets = pathname.startsWith("/workspace/tickets");
+  const inTickets =
+    pathname.startsWith("/workspace/tickets") ||
+    pathname === "/workspace/views";
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -69,50 +67,130 @@ export default function WorkspaceShell({
           </span>
         </Link>
         <nav aria-label="Workspace" className={styles.navigation}>
-          <p>CORE</p>
-          <Link
-            href="/"
-            aria-current={inOverview ? "page" : undefined}
-            className={inOverview ? styles.active : undefined}
-            onClick={() => setMenuOpen(false)}
-          >
-            <Icon name="grid" />
-            Overview
-          </Link>
-          <Link
-            href="/workspace/tickets"
-            onClick={() => setMenuOpen(false)}
-            aria-current={inTickets ? "page" : undefined}
-            className={inTickets ? styles.active : undefined}
-          >
-            <Icon name="ticket" />
-            Tickets<span className={styles.live}>Demo</span>
-          </Link>
-          {modules.map((item, i) => (
-            <div key={item.label}>
-              {i === 3 ? <p>OPERATIONS</p> : null}
-              <button
-                type="button"
-                disabled
-                title="Planned screen"
-                className={styles.planned}
+          {pathname.startsWith("/admin") ? (
+            <>
+              <Link href="/workspace" onClick={() => setMenuOpen(false)}>
+                <Icon name="chevron" size={16} />
+                Back to Workspace
+              </Link>
+              <p>ADMINISTRATION</p>
+              {adminMenu.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={pathname === item.href ? "page" : undefined}
+                  className={pathname === item.href ? styles.active : undefined}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <Icon name="settings" size={16} />
+                  {item.label}
+                </Link>
+              ))}
+            </>
+          ) : (
+            <>
+              <p>CORE</p>
+              <Link
+                href="/"
+                aria-current={inOverview ? "page" : undefined}
+                className={inOverview ? styles.active : undefined}
+                onClick={() => setMenuOpen(false)}
               >
-                <Icon name={item.icon} />
-                {item.label}
-                <span>Planned</span>
-              </button>
-            </div>
-          ))}
-          <a href="/workspace#team-capacity" onClick={() => setMenuOpen(false)}>
-            <Icon name="team" />
-            Team Workload
-          </a>
+                <Icon name="grid" />
+                Overview
+              </Link>
+              <Link
+                href="/workspace/tickets"
+                aria-current={inTickets ? "page" : undefined}
+                className={inTickets ? styles.active : undefined}
+                onClick={() => setMenuOpen(false)}
+              >
+                <Icon name="ticket" />
+                Tickets<span className={styles.live}>Demo</span>
+              </Link>
+              {workspaceMenu.map((item, i) => {
+                const active =
+                  pathname.startsWith(item.href) ||
+                  (item.label === "Assets & CMDB" &&
+                    pathname.startsWith("/workspace/cmdb"));
+                return (
+                  <div key={item.label}>
+                    {i === 3 ? <p>OPERATIONS</p> : null}
+                    <Link
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
+                      className={active ? styles.active : undefined}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <Icon name={item.icon} />
+                      {item.label}
+                    </Link>
+                  </div>
+                );
+              })}
+              <Link
+                href="/workspace/team"
+                aria-current={
+                  pathname === "/workspace/team" ? "page" : undefined
+                }
+                className={
+                  pathname === "/workspace/team" ? styles.active : undefined
+                }
+                onClick={() => setMenuOpen(false)}
+              >
+                <Icon name="team" />
+                Team Workload
+              </Link>
+              {(() => {
+                const key = pathname.startsWith("/workspace/cmdb")
+                  ? "assets"
+                  : pathname.startsWith("/workspace/views")
+                    ? "tickets"
+                    : pathname.split("/")[2];
+                const links = moduleNavigation[key];
+                return links ? (
+                  <>
+                    <p>IN THIS MODULE</p>
+                    {links.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <Icon name="chevron" size={14} />
+                        {item.label}
+                      </Link>
+                    ))}
+                  </>
+                ) : null;
+              })()}
+            </>
+          )}
         </nav>
         <div className={styles.bottom}>
-          <span>
+          <Link
+            href="/admin"
+            className={
+              pathname.startsWith("/admin") ? styles.active : undefined
+            }
+            onClick={() => setMenuOpen(false)}
+          >
             <Icon name="settings" />
-            Admin console <small>Planned</small>
-          </span>
+            Admin Console
+          </Link>
+          <Link
+            href="/screens"
+            aria-current={pathname === "/screens" ? "page" : undefined}
+            className={pathname === "/screens" ? styles.active : undefined}
+            onClick={() => setMenuOpen(false)}
+          >
+            <Icon name="grid" size={16} />
+            All Screens
+          </Link>
+          <Link href="/portal" onClick={() => setMenuOpen(false)}>
+            <Icon name="team" size={16} />
+            Employee Portal
+          </Link>
           <p>
             <span className={styles.dot} />
             Frontend preview · Mock data
@@ -153,7 +231,7 @@ export default function WorkspaceShell({
             <span className={styles.dot} />
             Demo workspace
           </span>
-          <Link href="/tickets#create-ticket" className={styles.create}>
+          <Link href="/workspace/tickets/new" className={styles.create}>
             <Icon name="plus" size={18} />
             <span>New ticket</span>
           </Link>

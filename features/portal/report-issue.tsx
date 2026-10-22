@@ -564,7 +564,7 @@ export default function ReportIssue() {
                     <span className={s.textLink}>Read quick guide ↓</span>
                   </summary>
                   <p>{a.text}</p>
-                  <Link href="/portal#guides">
+                  <Link href="/portal/knowledge">
                     Issue fixed? Return to Help Center →
                   </Link>
                 </details>

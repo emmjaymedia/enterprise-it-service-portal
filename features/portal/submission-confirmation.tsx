@@ -141,11 +141,11 @@ export default function SubmissionConfirmation({ id }: { id: string }) {
       <section className={s.support}>
         <div>
           <h2>Self-help troubleshooting</h2>
-          <Link className={s.textLink} href="/portal#guides">
+          <Link className={s.textLink} href="/portal/knowledge">
             Explore knowledge guides →
           </Link>
         </div>
-        <Link className={s.textLink} href="/portal#service-status">
+        <Link className={s.textLink} href="/portal/status">
           Check service status →
         </Link>
       </section>

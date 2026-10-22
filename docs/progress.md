@@ -405,3 +405,170 @@ validated resolution note.
   header-search recent history and draft retention, Ctrl+K navigation,
   date-format preview/cancel, and original GET API returning four TKT records.
 - Shared workspace pages no longer mark Overview as the active navigation item.
+
+## Batch 4 — E11/E12 approvals frontend
+
+- Added `/portal/approvals` with pending/completed views, counts, search,
+  category and age filters, empty results, requester/cost/due-date summaries and
+  individual decision links. Added Approvals to employee navigation.
+- Added `/portal/approvals/[id]` with business justification, scope and cost,
+  review chain, prior decisions, Redux note drafts and native confirmation dialogs.
+- Approve records the current review without claiming fulfillment. Reject requires
+  a reason; clarification requires a question and preserves pending status.
+  Permitted delegation transfers the item out of the current pending inbox.
+- Reducers guard self-approval, stale revisions, nonpending records, reason length
+  and unavailable/unauthorized delegates. Included self-request, withdrawn and
+  completed fixtures and an explicit changed-scope demo control.
+- Used supplied E11/E12 PNG and HTML references, retaining the existing employee
+  shell and identity. All new state is frontend-only and resets on reload.
+  No backend routes, permissions, provisioning or notifications changed.
+
+### Verification
+
+- ESLint, TypeScript and Webpack production build passed.
+- Chrome passed required-reason validation, clarification staying pending,
+  approval and completed-list synchronization, changed-revision guard and review,
+  delegation, self-approval blocking and missing-record fallback.
+- No document overflow at 390px, 768px or 1440px on inbox/detail; desktop inbox
+  and mobile detail screenshots reviewed. No page errors in checked flows.
+- Full assistive-technology review, request-change notifications, durable audit
+  and authorization remain pending. Native dialogs support Escape dismissal.
+- Remaining Batch 4 screens: W07 resolve, W08 escalate/transfer and E16 feedback.
+  Backend remains gated on frontend approval; source ZIP remains uncommitted.
+
+## Batch 4 — W07/W08/E16 completed
+
+### Delivered
+
+- W07 resolve dialog at `/workspace/tickets/:id#resolve`: resolution code, required
+  public summary, optional public article reference, task checklist, approval gate
+  and requester-notification preview. Public solution and activity are appended
+  once to the RTK Query record; queue/dashboard use the same updated cache.
+- W08 handoff dialog at `#escalate`: team transfer, individual specialist and level
+  escalation; eligible destinations, availability, required reason, internal notes,
+  public-update preview/opt-out and SLA/access-impact explanation. Sensitive records
+  cannot be shared with an ungranted team. No access-grant control is simulated.
+- Both dialogs support direct hash links, Escape/cancel with focus restoration,
+  preserved input after failed saves, conflict panels and explicit latest-revision
+  review. Demo recovery controls exercise failure and another agent's update.
+- New resolution guards validate code/summary, required tasks and pending approval.
+  Pending approval also blocks starting fulfillment. `INC-1102` and `INC-1103` are
+  blocker fixtures; `INC-1044` demonstrates no eligible sensitive-record transfer.
+- E16 `/portal/tickets/:id/feedback`: keyboard-accessible five-point rating, optional
+  evaluation criteria/comment, confirmation, editing and failure/retry. Redux guards
+  one response per cycle, stale cycle, invalid rating and expired editing. Active,
+  reopened, unavailable, already-rated and expired records have dedicated states.
+- Preview feedback policy: five calendar days from resolution, using a stable
+  22 October 2026 clock (or new resolution timestamp if later). Explicit expiry
+  preview provided; no auto-close scheduler or live survey deadline is implemented.
+- Shared `INC-1042` fixture synchronizes public resolution, handoff owner/public
+  update and reopening between employee Redux and the workspace RTK Query cache.
+  Reopening requires a reason, invalidates the current survey and leaves prior
+  feedback intact. A subsequent resolution starts a new feedback cycle. Matching
+  uses both ID and requester identity; internal handoff context is never copied.
+- E11/E12 from the prior step remain included. Successful decisions no longer show
+  a spurious changed-request warning; real changed revisions still require review.
+- Scoped action-sidebar styles to direct children so dialog explanations and
+  controls remain readable on mobile. Used supplied PNG/HTML references and
+  existing SCSS/Redux conventions; no new packages or backend changes.
+
+### Verification
+
+- ESLint, TypeScript and Webpack production build passed.
+- Chrome passed resolution field validation, failure/retry, conflict/input
+  preservation and latest-revision review, double-submit protection and one public
+  solution; employee feedback validation/failure/retry/edit; requester reopening
+  synchronized to agent state; second resolution with a separate survey response.
+- Chrome passed team/specialist handoff and escalation with retained SLA context,
+  internal-note privacy, Escape/focus restoration, required-task/pending-approval
+  blocking, sensitive destination blocking, expired/active/missing feedback states.
+- Additional Chrome checks passed approval rejection/draft retention and dialog
+  Escape, approval/clarification/delegation and changed-revision regression,
+  handoff required reason/conflict/retry, support reopening synchronized to the
+  employee, keyboard star selection, already-rated and expired editing states.
+- Dialog SLA/access explanations remain visible at all three checked widths.
+  No browser page errors occurred in the Batch 4 journeys or edge checks.
+- State-level checks passed stale/duplicate mutations, required gates, unavailable
+  specialists/teams, sensitive sharing, feedback uniqueness/edit/expiry/cycles,
+  requester reopening synchronization and approval self/stale/delegate guards.
+- No document/dialog overflow at 390px, 768px or 1440px on W07/W08/E16. Reviewed
+  desktop resolution/feedback and mobile escalation screenshots. Original
+  GET `/api/tickets` still returns four fictional records; no API writes occurred.
+
+### Limits and next batch
+
+- Batch 4 is ready for frontend review. All decisions, handoffs and feedback reset
+  on reload. Article links remain references; task management and later approval
+  stages are future screens. Notifications are previews, not delivered messages.
+- Full assistive-technology review, live SLA/auto-close behavior, real access
+  control, audit persistence and integrations remain pending. Backend still follows
+  frontend approval; source ZIP remains local and uncommitted.
+- Next is Batch 5: W04/W05/W06/W09/W10/W11 agent productivity and team operations,
+  building on the queue/filter/preview functionality already present.
+
+## Complete screen inventory — navigation and layouts first
+
+### Current direction
+
+The user requested all remaining screens and clickable sidebar navigation, with
+new feature behavior deferred. This replaces the prior batch-by-batch feature
+ordering for current work. Existing frontend demo interactions are retained.
+
+### Delivered
+
+- Every one of the 62 PRD screen IDs has a review route. Added DS01 design-system
+  and S03 interface-state previews, for 64 distinct entries at `/screens`.
+- Added 51 preview routes covering the remaining employee catalog/forms, knowledge
+  and assets/status screens; ticket creation, saved views, related records, tasks,
+  team workload, major incidents and fulfillment; problem/change/asset/CMDB,
+  knowledge and report screens; all 12 administration sections and design references.
+- Replaced every disabled workspace module item with a real Next.js link. Added
+  active navigation, contextual module links, a dedicated administration sidebar,
+  Back to Workspace, All Screens and Employee Portal navigation. The mobile menu
+  closes after navigation and remains scrollable for longer menus.
+- Added employee links for catalog, knowledge, assets, approvals and status, and
+  updated older help/status links to open the full screens. Employee home actions
+  now open catalog and knowledge pages rather than planned placeholders.
+- Added support-context approval routes while retaining existing approval logic.
+  Added queue-preserving W05 triage preview with next/previous and detail links;
+  Tasks & Time / Related Records links open the associated ticket screens.
+- Built a typed registry of screen-specific content using reusable React patterns
+  for records, cards, forms, timelines, checklists, workflows, charts, calendars,
+  capability matrices and service topology. New page tabs change visible content;
+  local search filters the displayed sample records. New action buttons show a
+  preview dialog and do not claim successful persistence or make API mutations.
+- Used the supplied PNG/HTML references. Existing SCSS Modules, Redux Toolkit,
+  RTK Query, backend routes and dependency versions are retained. No screenshot
+  rendering, iframe pages or external design runtimes were introduced.
+- Added `docs/screen-coverage.md` with all review routes and implementation limits.
+
+### Verification
+
+- ESLint, TypeScript and Webpack production build passed.
+- Coverage audit found all 62 PRD screens, 64 unique directory entries, 51 new
+  preview routes and 85 internal screen links with valid destinations.
+- Desktop Chrome rendered all 51 previews and 139 tab panels, and clicked every
+  workspace module and all 12 administration menu links to their page content.
+- Employee menus, support approvals, triage next/previous/Escape, ticket subpages,
+  preview-action dialog focus and keyboard tab changes passed browser checks.
+- Existing Batch 4 resolution, handoff, feedback/reopening and responsive browser
+  checks passed after the navigation changes. State-level workflow guards passed.
+- All new routes fit without document overflow at 390px; representative editors,
+  matrices, topology, calendar, catalog and detail screens also passed at 768px.
+  Mobile menu closing, unknown module/record fallbacks and all 64 directory rows
+  passed. No browser page errors or API mutations occurred in the screen checks.
+- Reviewed desktop major incidents, change calendar, inventory, administration and
+  catalog screenshots, plus mobile CMDB, role matrix and catalog layouts. The
+  original GET `/api/tickets` continued to return its four fictional records.
+
+### Limits
+
+- New business actions, integrations, live data and durable storage are deferred.
+  Existing implemented mock interactions still work; newly editable fields remain
+  local layout previews and do not persist. Sample metrics and service health are
+  explicitly illustrative.
+- Screen coverage includes English responsive layouts. Arabic translation/RTL,
+  full assistive-technology review and exact reproduction of every one of the
+  archive's 84 desktop/mobile/Arabic variants remain separate work.
+- Backend implementation remains gated on frontend approval. Source ZIP and
+  browser screenshots/check scripts remain local and uncommitted.

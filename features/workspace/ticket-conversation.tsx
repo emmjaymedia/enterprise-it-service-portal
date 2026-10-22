@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 import {
   useAddDemoMessageMutation,
@@ -92,6 +93,10 @@ export default function TicketConversation({ ticket }: { ticket: DemoTicket }) {
         >
           Activity history <span>{ticket.activity.length}</span>
         </button>
+        <Link href={`/workspace/tickets/${ticket.id}/tasks`}>Tasks & Time</Link>
+        <Link href={`/workspace/tickets/${ticket.id}/related`}>
+          Related Records
+        </Link>
       </div>
       {tab === "activity" ? (
         <section

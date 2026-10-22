@@ -76,11 +76,21 @@ export default function PortalShell({
         >
           My Tickets
         </Link>
-        <span title="Planned screen">
-          Service Catalog <small>Coming soon</small>
-        </span>
-        <Link href="/portal#guides">Knowledge Base</Link>
-        <Link href="/portal#service-status">Service Status</Link>
+        {[
+          ["Service Catalog", "/portal/catalog"],
+          ["Knowledge Base", "/portal/knowledge"],
+          ["My Assets", "/portal/assets"],
+          ["Approvals", "/portal/approvals"],
+          ["Service Status", "/portal/status"],
+        ].map(([label, href]) => (
+          <Link
+            key={href}
+            href={href}
+            aria-current={path.startsWith(href) ? "page" : undefined}
+          >
+            {label}
+          </Link>
+        ))}
       </nav>
       <main id="portal-main" className={s.main}>
         {children}

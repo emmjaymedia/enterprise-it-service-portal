@@ -8,6 +8,13 @@ import {
 } from "@/features/workspace/ticket-model";
 import { ticketsApi } from "@/features/tickets/tickets-api";
 
+import type { WorkflowFields } from "@/features/workspace/workflow-policy";
+import {
+  supportResolutionRecorded,
+  supportHandoffRecorded,
+  supportTicketReopened,
+} from "@/features/workspace/workflow-events";
+
 export const teams = [
   "Network Operations",
   "Applications Support",
@@ -16,7 +23,7 @@ export const teams = [
 ] as const;
 export type Team = (typeof teams)[number];
 export type QueueFilter = "all" | "unassigned" | "due" | "breached";
-export type DemoTicket = {
+export type DemoTicket = WorkflowFields & {
   id: string;
   subject: string;
   requester: string;
@@ -71,6 +78,23 @@ export const demoTickets: DemoTicket[] = Array.from({ length: 42 }, (_, i) => ({
   age: i % 7,
   updatedMinutes: i * 7 + 4,
   version: 1,
+  tasks: [
+    {
+      id: `validation-${i}`,
+      label: "Validate the fix with the requester",
+      required: true,
+      done: i !== 2,
+    },
+  ],
+  approvalState: i === 3 ? "Pending" : "Not required",
+  sensitive: i === 0 || i === 3,
+  allowedTeams:
+    i === 0
+      ? ["Network Operations"]
+      : i === 3
+        ? ["Identity & Access"]
+        : undefined,
+  escalationLevel: 1,
   attachments: i % 3 === 1 ? ["issue-screenshot.png"] : [],
   messages: [
     {
@@ -158,9 +182,84 @@ export const dashboardApi = ticketsApi.injectEndpoints({
           const result = applyTicketChange(ticket, change, version, bulk);
           if (!result.ok) return { id, ok: false, error: result.error };
           const time = now();
+          const publicMessages: Message[] = [];
+          if (change.kind === "status" && change.value === "Resolved") {
+            const eventId = crypto.randomUUID();
+            publicMessages.push({
+              id: eventId,
+              author: "Daniel Cole",
+              visibility: "public",
+              body: `Resolution — ${change.code}: ${change.resolution?.trim()}${change.article ? `\nPublic article reference: ${change.article}` : ""}`,
+              time,
+              attachments: [],
+            });
+            api.dispatch(
+              supportResolutionRecorded({
+                id,
+                requester: ticket.requester,
+                summary: change.resolution!.trim(),
+                code: change.code!,
+                article: change.article,
+                at: time,
+                eventId,
+              }),
+            );
+          }
+          if (
+            change.kind === "status" &&
+            change.value === "Open" &&
+            ticket.status === "Resolved"
+          ) {
+            const eventId = crypto.randomUUID();
+            const reason = change.reason!.trim();
+            publicMessages.push({
+              id: eventId,
+              author: "IT Support",
+              visibility: "public",
+              body: `Ticket reopened: ${reason}`,
+              time,
+              attachments: [],
+            });
+            api.dispatch(
+              supportTicketReopened({
+                id,
+                requester: ticket.requester,
+                reason,
+                at: time,
+                eventId,
+              }),
+            );
+          }
+          if (change.kind === "handoff") {
+            const eventId = crypto.randomUUID();
+            const publicText = change.publicUpdate
+              ? `Your ticket ${change.mode === "escalate" ? `was escalated to level ${change.level}` : "has a new support assignment"} with ${change.team}. Your existing service targets continue to apply.`
+              : "";
+            if (publicText)
+              publicMessages.push({
+                id: eventId,
+                author: "IT Support",
+                visibility: "public",
+                body: publicText,
+                time,
+                attachments: [],
+              });
+            api.dispatch(
+              supportHandoffRecorded({
+                id,
+                requester: ticket.requester,
+                team: change.team,
+                assignee: change.assignee,
+                publicText,
+                at: time,
+                eventId,
+              }),
+            );
+          }
           changes.set(id, {
             ...result.ticket,
             updatedMinutes: 0,
+            messages: [...ticket.messages, ...publicMessages],
             activity: [
               ...ticket.activity,
               {

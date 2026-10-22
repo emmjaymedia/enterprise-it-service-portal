@@ -8,6 +8,10 @@ import portalReducer from "@/features/portal/portal-slice";
 
 import sharedReducer from "@/features/shared/shared-slice";
 
+import { workflowListener } from "@/features/workspace/workflow-listener";
+
+import approvalsReducer from "@/features/approvals/approvals-slice";
+
 export function makeStore() {
   return configureStore({
     reducer: {
@@ -15,10 +19,13 @@ export function makeStore() {
       workspace: workspaceReducer,
       portal: portalReducer,
       shared: sharedReducer,
+      approvals: approvalsReducer,
       [ticketsApi.reducerPath]: ticketsApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(ticketsApi.middleware),
+      getDefaultMiddleware()
+        .prepend(workflowListener.middleware)
+        .concat(ticketsApi.middleware),
   });
 }
 

@@ -385,7 +385,7 @@ export default function MyTickets({ view }: { view?: string }) {
             Check company-wide service information before submitting another
             issue.
           </p>
-          <Link className={s.textLink} href="/portal#service-status">
+          <Link className={s.textLink} href="/portal/status">
             Check Service Status →
           </Link>
         </div>

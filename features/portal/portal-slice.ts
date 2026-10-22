@@ -1,4 +1,13 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import {
+  supportResolutionRecorded,
+  supportHandoffRecorded,
+  supportTicketReopened,
+} from "@/features/workspace/workflow-events";
+import {
+  feedbackEligibility,
+  type ResolutionFeedback,
+} from "./feedback-policy";
 export type IssueDraft = {
   subject: string;
   category: string;
@@ -25,6 +34,12 @@ export type PublicMessage = {
   attachments?: { name: string; size: number }[];
 };
 export type EmployeeTicket = {
+  resolvedAt?: string;
+  resolutionCycle?: number;
+  resolutionSummary?: string;
+  resolutionCode?: string;
+  resolutionArticle?: string;
+  feedback?: ResolutionFeedback[];
   messages?: PublicMessage[];
   owner?: string;
   team?: string;
@@ -74,6 +89,10 @@ const initialState: {
     },
     {
       id: "REQ-1039",
+      resolvedAt: "2026-10-21T14:00:00Z",
+      resolutionCycle: 1,
+      resolutionSummary:
+        "Your license is ready. Sign in with your corporate account and verify your team workspace.",
       subject: "Figma license request",
       status: "Resolved",
       priority: "P4 Low",
@@ -82,10 +101,22 @@ const initialState: {
       service: "Software",
       category: "Software",
       createdAt: "2026-10-15T08:00:00Z",
-      updatedAt: "2026-10-18T14:00:00Z",
+      updatedAt: "2026-10-21T14:00:00Z",
     },
     {
       id: "INC-1028",
+      resolvedAt: "2026-10-08T10:00:00Z",
+      resolutionCycle: 1,
+      feedback: [
+        {
+          cycle: 1,
+          rating: 4,
+          comment: "Calendar works again.",
+          criteria: {},
+          submittedAt: "2026-10-08T12:00:00Z",
+          updatedAt: "2026-10-08T12:00:00Z",
+        },
+      ],
       subject: "Outlook calendar not syncing",
       status: "Closed",
       priority: "P3 Medium",
@@ -144,6 +175,43 @@ const slice = createSlice({
   name: "portal",
   initialState,
   reducers: {
+    submitResolutionFeedback(
+      state,
+      action: PayloadAction<{
+        id: string;
+        cycle: number;
+        rating: number;
+        comment: string;
+        criteria: Record<string, string>;
+        at: string;
+        edit: boolean;
+      }>,
+    ) {
+      const p = action.payload;
+      const ticket = state.tickets.find((t) => t.id === p.id);
+      if (
+        !ticket ||
+        feedbackEligibility(ticket, Date.parse(p.at)) ||
+        ticket.resolutionCycle !== p.cycle ||
+        !Number.isInteger(p.rating) ||
+        p.rating < 1 ||
+        p.rating > 5 ||
+        p.comment.length > 500
+      )
+        return;
+      const prior = ticket.feedback?.find((f) => f.cycle === p.cycle);
+      if (!!prior !== p.edit) return;
+      const value = {
+        cycle: p.cycle,
+        rating: p.rating,
+        comment: p.comment.trim(),
+        criteria: p.criteria,
+        submittedAt: prior?.submittedAt ?? p.at,
+        updatedAt: p.at,
+      };
+      if (prior) Object.assign(prior, value);
+      else (ticket.feedback ??= []).push(value);
+    },
     saveReplyDraft(state, action: PayloadAction<{ id: string; text: string }>) {
       state.replyDrafts[action.payload.id] = action.payload.text;
     },
@@ -212,8 +280,69 @@ const slice = createSlice({
       state.draft = emptyDraft;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(supportTicketReopened, (state, { payload: p }) => {
+      const ticket = state.tickets.find((t) => t.id === p.id);
+      if (
+        !ticket ||
+        p.requester !== "Amina Yusuf" ||
+        ticket.status !== "Resolved"
+      )
+        return;
+      ticket.status = "Open";
+      ticket.updatedAt = p.at;
+      (ticket.messages ??= []).push({
+        id: p.eventId,
+        author: "IT Support",
+        text: `Ticket reopened: ${p.reason}`,
+        at: p.at,
+      });
+    });
+    builder.addCase(supportHandoffRecorded, (state, { payload: p }) => {
+      const ticket = state.tickets.find((t) => t.id === p.id);
+      if (
+        !ticket ||
+        p.requester !== "Amina Yusuf" ||
+        ["Resolved", "Closed", "Cancelled"].includes(ticket.status)
+      )
+        return;
+      ticket.team = p.team;
+      ticket.owner = p.assignee ?? "Awaiting assignment";
+      ticket.updatedAt = p.at;
+      if (p.publicText)
+        (ticket.messages ??= []).push({
+          id: p.eventId,
+          author: "IT Support",
+          text: p.publicText,
+          at: p.at,
+        });
+    });
+    builder.addCase(supportResolutionRecorded, (state, { payload: p }) => {
+      const ticket = state.tickets.find((t) => t.id === p.id);
+      if (
+        !ticket ||
+        p.requester !== "Amina Yusuf" ||
+        ["Resolved", "Closed", "Cancelled"].includes(ticket.status)
+      )
+        return;
+      ticket.status = "Resolved";
+      ticket.resolutionCycle = (ticket.resolutionCycle ?? 0) + 1;
+      ticket.resolvedAt = p.at;
+      ticket.updatedAt = p.at;
+      ticket.resolutionSummary = p.summary;
+      ticket.resolutionCode = p.code;
+      ticket.resolutionArticle = p.article;
+      (ticket.messages ??= []).push({
+        id: p.eventId,
+        author: "Daniel Cole · IT Support",
+        text: `Resolution — ${p.code}: ${p.summary}${p.article ? `\nPublic article reference: ${p.article}` : ""}`,
+        at: p.at,
+      });
+    });
+  },
 });
 export const {
+  submitResolutionFeedback,
   saveDraft,
   addIssue,
   saveReplyDraft,

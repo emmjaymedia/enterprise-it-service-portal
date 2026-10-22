@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import WorkspaceShell from "@/components/workspace/workspace-shell";
@@ -9,6 +9,7 @@ import {
   useChangeDemoTicketsMutation,
   type DemoTicket,
 } from "@/features/dashboard/dashboard-data";
+import TicketWorkflowActions from "./ticket-workflow-actions";
 import TicketProperties from "./ticket-properties";
 import TicketConversation, { displayTime } from "./ticket-conversation";
 import styles from "./workspace-tickets.module.scss";
@@ -76,8 +77,6 @@ function TicketRecord({
   back: string;
   onRefresh: () => void;
 }) {
-  const dialog = useRef<HTMLDialogElement>(null);
-  const [resolution, setResolution] = useState("");
   const [feedback, setFeedback] = useState("");
   const [feedbackVersion, setFeedbackVersion] = useState<number | null>(null);
   function reportFeedback(text: string, version: number | null = null) {
@@ -87,30 +86,7 @@ function TicketRecord({
   const [change, { isLoading }] = useChangeDemoTicketsMutation();
   const [pendingVersion, setPendingVersion] = useState(0);
   const pending = isLoading || ticket.version < pendingVersion;
-  async function resolve() {
-    setPendingVersion(ticket.version + 1);
-    try {
-      const results = await change({
-        items: [{ id: ticket.id, version: ticket.version }],
-        change: { kind: "status", value: "Resolved", resolution },
-        bulk: false,
-      }).unwrap();
-      if (!results[0].ok) {
-        setPendingVersion(0);
-        reportFeedback(results[0].error ?? "Unable to resolve.");
-        return;
-      }
-      reportFeedback(
-        "Ticket resolved in this mock session.",
-        ticket.version + 1,
-      );
-      setResolution("");
-      dialog.current?.close();
-    } catch {
-      setPendingVersion(0);
-      reportFeedback("Unable to resolve. Your note is preserved.");
-    }
-  }
+
   return (
     <div className={styles.recordGrid}>
       <aside className={styles.recordNavigation} aria-label="Ticket navigation">
@@ -172,18 +148,7 @@ function TicketRecord({
             <Icon name="team" size={14} />
             Assign to me
           </button>
-          <button
-            type="button"
-            className={styles.primary}
-            disabled={ticket.status === "Resolved"}
-            onClick={() => {
-              reportFeedback("");
-              dialog.current?.showModal();
-            }}
-          >
-            <Icon name="check" size={14} />
-            Resolve ticket
-          </button>
+          <TicketWorkflowActions ticket={ticket} onFeedback={reportFeedback} />
         </div>
       </aside>
       <div className={styles.recordMain}>
@@ -322,44 +287,6 @@ function TicketRecord({
           Original ticket workspace →
         </Link>
       </aside>
-      <dialog
-        ref={dialog}
-        className={styles.dialog}
-        aria-labelledby="resolve-title"
-      >
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void resolve();
-          }}
-        >
-          <h2 id="resolve-title">Resolve {ticket.id}</h2>
-          <p>Assign the ticket and start work before resolving it.</p>
-          <label>
-            Resolution note
-            <textarea
-              autoFocus
-              rows={5}
-              required
-              minLength={10}
-              maxLength={2000}
-              value={resolution}
-              onChange={(e) => setResolution(e.target.value)}
-            />
-          </label>
-          <p role="status" className={styles.rowError}>
-            {feedback}
-          </p>
-          <div className={styles.actions}>
-            <button type="button" onClick={() => dialog.current?.close()}>
-              Cancel
-            </button>
-            <button type="submit" disabled={pending} className={styles.primary}>
-              Resolve ticket
-            </button>
-          </div>
-        </form>
-      </dialog>
     </div>
   );
 }

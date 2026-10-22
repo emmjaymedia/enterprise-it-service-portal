@@ -25,6 +25,7 @@ import {
   viewLabels,
   type QueueFilters,
 } from "./queue-filters";
+import TriagePreview from "@/features/screens/triage-preview";
 import type { TicketChange } from "./ticket-model";
 import styles from "./workspace-tickets.module.scss";
 
@@ -282,6 +283,7 @@ export default function TicketQueue() {
           <Icon name="plus" size={14} />
           Save view
         </button>
+        <Link href="/workspace/views">Advanced Filter Builder →</Link>
       </nav>
       {savedViews.length ? (
         <div className={styles.savedViews} aria-label="Saved views">
@@ -716,6 +718,12 @@ export default function TicketQueue() {
                     </td>
                     <td className={styles.subjectCell}>
                       <Link href={detailUrl(ticket.id)}>{ticket.subject}</Link>
+                      <Link
+                        href={`${scope}${scope.includes("?") ? "&" : "?"}preview=${ticket.id}`}
+                        aria-label={`Preview ${ticket.id}`}
+                      >
+                        Quick Preview →
+                      </Link>
                       <small>
                         {ticket.service}
                         {ticket.attachments.length
@@ -919,6 +927,7 @@ export default function TicketQueue() {
           Done
         </button>
       </dialog>
+      <TriagePreview tickets={data} />
     </WorkspaceShell>
   );
 }

@@ -218,6 +218,15 @@ export default function EmployeeTicketDetail({ id }: { id: string }) {
           </div>
         </section>
       )}
+      {["Resolved", "Closed"].includes(ticket.status) && (
+        <section className={s.info}>
+          <h2>Share your support experience</h2>
+          <p>Rate this resolution or review your existing feedback.</p>
+          <Link className={s.primary} href={`/portal/tickets/${id}/feedback`}>
+            Provide Feedback →
+          </Link>
+        </section>
+      )}
       {["Closed", "Cancelled"].includes(ticket.status) && (
         <p className={s.info}>
           This ticket is {ticket.status.toLowerCase()} and read-only.{" "}
@@ -301,9 +310,10 @@ export default function EmployeeTicketDetail({ id }: { id: string }) {
             <section className={`${s.card} ${s.message}`}>
               <h2>Solution from IT Support</h2>
               <p>
-                {ticket.id === "REQ-1039"
-                  ? "Your Figma license has been provisioned. Sign in with your corporate account and check that you can access your team workspace."
-                  : "Please review the latest public update for your solution."}
+                {ticket.resolutionSummary ??
+                  (ticket.id === "REQ-1039"
+                    ? "Your Figma license has been provisioned. Sign in with your corporate account and check that you can access your team workspace."
+                    : "Please review the latest public update for your solution.")}
               </p>
             </section>
           )}
@@ -442,7 +452,7 @@ export default function EmployeeTicketDetail({ id }: { id: string }) {
               Browse published troubleshooting guides for common VPN, account
               and hardware issues.
             </p>
-            <Link className={s.textLink} href="/portal#guides">
+            <Link className={s.textLink} href="/portal/knowledge">
               View knowledge guides →
             </Link>
           </section>

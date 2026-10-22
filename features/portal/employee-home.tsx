@@ -87,16 +87,16 @@ export default function EmployeeHome() {
             Get help from IT Support <b>Submit Ticket →</b>
           </small>
         </Link>
-        <div>
+        <Link href="/portal/catalog">
           <Icon name="box" size={30} />
           <h2>Request a Service</h2>
           <p>
             Order equipment, request cloud licenses, provision database access,
             or schedule desk peripherals.
           </p>
-          <small>Service catalog · Coming soon</small>
-        </div>
-        <a href="#guides">
+          <small>Browse available services →</small>
+        </Link>
+        <Link href="/portal/knowledge">
           <Icon name="book" size={30} />
           <h2>Knowledge Base</h2>
           <p>
@@ -106,7 +106,7 @@ export default function EmployeeHome() {
           <small>
             Verified by IT Operations <b>Explore Articles →</b>
           </small>
-        </a>
+        </Link>
       </div>
       <div className={s.homeColumns}>
         <section id="my-tickets">
